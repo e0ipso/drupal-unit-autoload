@@ -1,0 +1,20 @@
+{
+  "name": "mateu-aguilo-bosch/composer-class-loader",
+  "description": "Allows you to load classes in non standard unknown file locations.",
+  "minimum-stability": "stable",
+  "license": "GPLv2",
+  "authors": [
+    {
+      "name": "Mateu Aguiló Bosch",
+      "email": "mateu.aguilo.bosch@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Drupal\\Composer\\ClassLoader": "src/"
+    },
+    "files": [
+      "bootstrap.php"
+    ]
+  }
+}
