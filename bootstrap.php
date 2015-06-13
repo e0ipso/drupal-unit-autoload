@@ -2,6 +2,10 @@
 
 namespace Drupal\Composer\ClassLoader;
 
+// Register the class loader.
+$bootstrap = new AutoloaderBootstrap();
+$bootstrap->register();
+
 /**
  * Class AutoloaderBootstrap
  *
@@ -22,6 +26,9 @@ class AutoloaderBootstrap {
         return;
       }
     }
+    // TODO: Load the *correct* composer.json in a decent OO way.
+    // Parse the composer.json.
+    Loader::setClassMap(json_decode(file_get_contents('composer.json')));
     $this::load();
   }
 
@@ -47,7 +54,3 @@ class AutoloaderBootstrap {
   }
 
 }
-
-// Register the class loader.
-$bootstrap = new AutoloaderBootstrap();
-$bootstrap->register();

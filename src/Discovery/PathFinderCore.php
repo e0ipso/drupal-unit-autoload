@@ -8,6 +8,6 @@
 namespace Drupal\Composer\ClassLoader\Discovery;
 
 
-class PathFinderCore implements PathFinderInterface {
+class PathFinderCore extends PathFinderBase implements PathFinderInterface {
 
 }
