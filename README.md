@@ -44,7 +44,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
   "require-dev": {
     "phpunit/phpunit": "4.7.*",
     "mockery/mockery": "0.9.*",
-    "mateu-aguilo-bosch/drupal-unit-autoload": "0.1.0"
+    "mateu-aguilo-bosch/drupal-unit-autoload": "0.1.*"
   },
   "autoload": {
     "psr-0": {
@@ -68,7 +68,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
 ```
 
 Running `composer install` on that folder will download PHPUnit, Mockery -and all of the tools that you use for your
-tests-. Additionally it will download this project, that is what `"mateu-aguilo-bosch/drupal-unit-autoload": "0.1.0"` is
+tests-. Additionally it will download this project, that is what `"mateu-aguilo-bosch/drupal-unit-autoload": "0.1.*"` is
 for.
 
 At this point you only need is add the new _class-loader_ key in your composer file. In there you have two options:
