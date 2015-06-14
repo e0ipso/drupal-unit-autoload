@@ -92,7 +92,7 @@ class AutoloaderBootstrap {
     Loader::registerPsr(array(
       'psr-0' => $psr0,
       'psr-4' => $psr4,
-    ));
+    ), $this->loader);
   }
 
 }
