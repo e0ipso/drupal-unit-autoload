@@ -120,9 +120,9 @@ class Loader implements LoaderInterface {
       'psr-4' => 'addPsr4',
     );
     foreach ($psrs as $psr => $loader_method) {
-      foreach (static::$psrClassMap[$psr] as $partial_namespace) {
+      foreach (static::$psrClassMap[$psr] as $partial_namespace => $tokenized_path) {
         try {
-          $resolver = new TokenResolver($partial_namespace);
+          $resolver = new TokenResolver($tokenized_path);
           $finder = $resolver->resolve();
           // Get the real path of the prefix.
           $real_path = $finder->find(static::$seed);
