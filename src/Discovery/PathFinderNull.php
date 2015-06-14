@@ -12,9 +12,8 @@ class PathFinderNull extends PathFinderBase implements PathFinderInterface {
   /**
    * {@inheritdoc}
    */
-  public function requireFile() {
-    require_once $this->path;
-    return TRUE;
+  public function find($seed) {
+    return $this->path;
   }
 
 }

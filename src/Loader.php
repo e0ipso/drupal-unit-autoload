@@ -27,11 +27,17 @@ class Loader implements LoaderInterface {
     if (!in_array($class, static::$classMap)) {
       return FALSE;
     }
-    $resolver = new TokenResolver(static::$classMap[$class]);
-    $finder = $resolver->resolve();
-    // Have the path finder require the file and return TRUE or FALSE if it
-    // found the file or not.
-    return $finder->require();
+    try {
+      $resolver = new TokenResolver(static::$classMap[$class]);
+      $finder = $resolver->resolve();
+      // Have the path finder require the file and return TRUE or FALSE if it
+      // found the file or not.
+      $finder->requireFile();
+      return TRUE;
+    }
+    catch (ClassLoaderException $e) {
+      return FALSE;
+    }
   }
 
   /**

@@ -8,7 +8,7 @@
 namespace Drupal\Composer\ClassLoader\Discovery;
 
 
-class PathFinderBase implements PathFinderInterface {
+abstract class PathFinderBase implements PathFinderInterface {
 
   /**
    * The relative path.
@@ -25,6 +25,14 @@ class PathFinderBase implements PathFinderInterface {
    */
   public function __construct($path) {
     $this->path = $path;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function requireFile($seed) {
+    $real_path = $this->find($seed);
+    require_once $real_path;
   }
 
 }
