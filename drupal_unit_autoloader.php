@@ -21,10 +21,10 @@ class AutoloaderBootstrap {
   /**
    * Constructs a AutoloaderBootstrap object.
    *
-   * @param \Composer\Autoload\ClassLoader $loader
+   * @param Composer\Autoload\ClassLoader $loader
    *   The Composer class loader.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $loader) {
+  public function __construct(Composer\Autoload\ClassLoader $loader) {
     $this->loader = $loader;
   }
 
@@ -39,6 +39,7 @@ class AutoloaderBootstrap {
     }
     // Parse the composer.json.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
+    Loader::setSeed('composer.json');
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
   }
@@ -68,7 +69,6 @@ class AutoloaderBootstrap {
       return;
     }
     Loader::setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
-    Loader::setSeed('composer.json');
     $this::load();
   }
 
@@ -79,7 +79,20 @@ class AutoloaderBootstrap {
    *   The Composer configuration.
    */
   protected function registerPsr($composer_config) {
-    // TODO: Implement this.
+    $psr0 = $psr4 = array();
+    if (!empty($composer_config->{'class-loader'}->{'psr-0'})) {
+      $psr0 = (array) $composer_config->{'class-loader'}->{'psr-0'};
+    }
+    if (!empty($composer_config->{'class-loader'}->{'psr-4'})) {
+      $psr4 = (array) $composer_config->{'class-loader'}->{'psr-4'};
+    }
+    if (empty($psr4) && empty($psr0)) {
+      return;
+    }
+    Loader::registerPsr(array(
+      'psr-0' => $psr0,
+      'psr-4' => $psr4,
+    ));
   }
 
 }

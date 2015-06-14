@@ -15,9 +15,21 @@ class Loader implements LoaderInterface {
    * Contains the name of the class, including the namespace, as the key. The
    * value is the file name with path tokens.
    *
-   * @var
+   * @var array
    */
   protected static $classMap;
+
+  /**
+   * PSR Class maps.
+   *
+   * Contains the namespace, as the key. The value is the file path with tokens.
+   * There are two types of PSR autoloaders:
+   *   - psr-0
+   *   - psr-4
+   *
+   * @var array
+   */
+  protected static $psrClassMap;
 
   /**
    * Seed.
@@ -39,6 +51,13 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function setClassMap(array $class_map) {
+    static::$classMap = $class_map;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function setPsrClassMap(array $class_map) {
     static::$classMap = $class_map;
   }
 
@@ -91,4 +110,29 @@ class Loader implements LoaderInterface {
       return FALSE;
     }
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function registerPsr($partial_namespace, Composer\Autoload\ClassLoader $loader) {
+    $partial_namespace = static::prefixClass($partial_namespace);
+    if (!in_array($partial_namespace, array_keys(static::$classMap))) {
+      return FALSE;
+    }
+    $psrs = array(
+      'psr-0' => 'add',
+      'psr-4' => 'addPsr4',
+    );
+    foreach ($psrs as $psr => $loader_method) {
+      try {
+        $resolver = new TokenResolver(static::$classMap[$psr][$partial_namespace]);
+        $finder = $resolver->resolve();
+        // Get the real path of the prefix.
+        $real_path = $finder->find(static::$seed);
+        $loader->{$loader_method}($partial_namespace, $real_path);
+      }
+      catch (ClassLoaderException $e) {}
+    }
+  }
+
 }

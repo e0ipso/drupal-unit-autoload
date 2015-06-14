@@ -13,7 +13,7 @@ class PathFinderNull extends PathFinderBase implements PathFinderInterface {
    * {@inheritdoc}
    */
   public function find($seed) {
-    return $this->path;
+    return '';
   }
 
 }
