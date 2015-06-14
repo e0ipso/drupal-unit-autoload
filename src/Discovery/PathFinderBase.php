@@ -36,4 +36,20 @@ abstract class PathFinderBase implements PathFinderInterface {
     require_once $real_path;
   }
 
+  /**
+   * Cleans a directory path by removing /. from the end.
+   *
+   * @param string $dir_path
+   *   The path name to clean.
+   *
+   * @return string
+   *   The clean path name.
+   */
+  protected function cleanDirPath($dir_path) {
+    // Remove annoying /. at the end.
+    $dir_path = rtrim($dir_path, '.');
+    $dir_path = rtrim($dir_path, '/');
+    return $dir_path;
+  }
+
 }

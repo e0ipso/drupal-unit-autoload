@@ -53,7 +53,7 @@ class TokenResolver implements TokenResolverInterface {
     $class_name = $this->getClassName();
     $arguments[] = $this->cleanToken();
     // Add more arguments to the constructor, like the module name.
-    $arguments += $this->parseArguments();
+    $arguments = array_merge($arguments, $this->parseArguments());
     return new $class_name($arguments);
   }
 
@@ -114,7 +114,7 @@ class TokenResolver implements TokenResolverInterface {
     $matches = array();
     if (preg_match($delimiter . preg_quote($token_name) . '<(.+)>.*' . $delimiter, $this->path, $matches)) {
       // Some arguments were found.
-      return explode(',', $matches[2]);
+      return explode(',', $matches[1]);
     }
     return array();
   }
