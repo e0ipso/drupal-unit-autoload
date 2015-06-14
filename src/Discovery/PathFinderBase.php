@@ -20,11 +20,12 @@ abstract class PathFinderBase implements PathFinderInterface {
   /**
    * Constructs a PathFinderBase object.
    *
-   * @param string $path
-   *   The relative path to find.
+   * @param string[] $options
+   *   Constructor options. It contains, at least the relative path in the first
+   *   position.
    */
-  public function __construct($path) {
-    $this->path = $path;
+  public function __construct(array $options) {
+    $this->path = $options[0];
   }
 
   /**

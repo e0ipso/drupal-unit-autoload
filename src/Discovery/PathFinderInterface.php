@@ -11,6 +11,15 @@ namespace Drupal\Composer\ClassLoader\Discovery;
 interface PathFinderInterface {
 
   /**
+   * Constructs a PathFinderBase object.
+   *
+   * @param string[] $options
+   *   Constructor options. It contains, at least the relative path in the first
+   *   position.
+   */
+  public function __construct(array $options);
+
+  /**
    * Finds and requires the current file.
    *
    * @throws \Drupal\Composer\ClassLoader\ClassLoaderException

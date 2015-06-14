@@ -22,14 +22,13 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
   /**
    * Constructs a PathFinderContrib object.
    *
-   * @param string $path
-   *   The relative path to find.
-   * @param string $module_name
-   *   The name of the contrib module to find.
+   * @param string[] $options
+   *   Constructor options. It contains, at least the relative path in the first
+   *   position and the module name in the second.
    */
-  public function __construct($path, $module_name) {
-    $this->path = $path;
-    $this->moduleName = $module_name;
+  public function __construct(array $options) {
+    $this->path = $options[0];
+    $this->moduleName = $options[1];
   }
 
   /**
