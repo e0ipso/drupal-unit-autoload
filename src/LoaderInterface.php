@@ -28,4 +28,11 @@ interface LoaderInterface {
    */
   public static function setClassMap(array $class_map);
 
+  /**
+   * Sets the seed path.
+   *
+   * @param string $seed.
+   */
+  public static function setSeed($seed);
+
 }

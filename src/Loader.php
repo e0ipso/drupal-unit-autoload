@@ -21,6 +21,15 @@ class Loader implements LoaderInterface {
   protected static $classMap;
 
   /**
+   * Seed.
+   *
+   * This is the path of the composer.json file that triggered the bootstrap.
+   *
+   * @var
+   */
+  protected static $seed;
+
+  /**
    * {@inheritdoc}
    */
   public static function autoload($class) {
@@ -32,7 +41,7 @@ class Loader implements LoaderInterface {
       $finder = $resolver->resolve();
       // Have the path finder require the file and return TRUE or FALSE if it
       // found the file or not.
-      $finder->requireFile();
+      $finder->requireFile(static::$seed);
       return TRUE;
     }
     catch (ClassLoaderException $e) {
@@ -45,6 +54,13 @@ class Loader implements LoaderInterface {
    */
   public static function setClassMap(array $class_map) {
     static::$classMap = $class_map;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function setSeed($seed) {
+    static::$seed = $seed;
   }
 
 }
