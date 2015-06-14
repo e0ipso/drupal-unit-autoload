@@ -21,10 +21,10 @@ class AutoloaderBootstrap {
   /**
    * Constructs a AutoloaderBootstrap object.
    *
-   * @param Composer\Autoload\ClassLoader $loader
+   * @param \Composer\Autoload\ClassLoader $loader
    *   The Composer class loader.
    */
-  public function __construct(Composer\Autoload\ClassLoader $loader) {
+  public function __construct(\Composer\Autoload\ClassLoader $loader) {
     $this->loader = $loader;
   }
 

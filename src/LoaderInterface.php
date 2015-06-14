@@ -47,12 +47,12 @@ interface LoaderInterface {
    *
    * @param string $partial_namespace
    *   The requested class.
-   * @param Composer\Autoload\ClassLoader $loader
+   * @param \Composer\Autoload\ClassLoader $loader
    *   The Composer's autoloader.
    *
    * @return bool
    *   TRUE if the class was found. FALSE otherwise.
    */
-  public static function registerPsr($partial_namespace, Composer\Autoload\ClassLoader $loader);
+  public static function registerPsr($partial_namespace, \Composer\Autoload\ClassLoader $loader);
 
 }

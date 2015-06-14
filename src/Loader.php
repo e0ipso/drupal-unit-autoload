@@ -114,7 +114,7 @@ class Loader implements LoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public static function registerPsr($partial_namespace, Composer\Autoload\ClassLoader $loader) {
+  public static function registerPsr($partial_namespace, \Composer\Autoload\ClassLoader $loader) {
     $partial_namespace = static::prefixClass($partial_namespace);
     if (!in_array($partial_namespace, array_keys(static::$classMap))) {
       return FALSE;
