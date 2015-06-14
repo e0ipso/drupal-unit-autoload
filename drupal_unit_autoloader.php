@@ -2,11 +2,11 @@
 
 namespace Drupal\Composer\ClassLoader;
 
-$loader = require_once 'vendor/autoload.php';
-
-// Register the class loader.
-$bootstrap = new AutoloaderBootstrap($loader);
-$bootstrap->register();
+return function ($loader) {
+  $bootstrap = new AutoloaderBootstrap($loader);
+  // Register the class loader.
+  $bootstrap->register();
+};
 
 /**
  * Class AutoloaderBootstrap
