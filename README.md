@@ -83,7 +83,3 @@ Those tokens will be expanded to the real paths that they represent. This way, p
   
 The important thing to note is that your code ships with the same _tokenized_ path for everyone, without caring about
 where the dependencies are installed.
-
-## Status
-This code is still under heavy development. Use it only of you understand what it does.
-
