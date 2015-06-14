@@ -32,21 +32,7 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function autoload($class) {
-    $class = static::prefixClass($class);
-    if (!in_array($class, array_keys(static::$classMap))) {
-      return FALSE;
-    }
-    try {
-      $resolver = new TokenResolver(static::$classMap[$class]);
-      $finder = $resolver->resolve();
-      // Have the path finder require the file and return TRUE or FALSE if it
-      // found the file or not.
-      $finder->requireFile(static::$seed);
-      return TRUE;
-    }
-    catch (ClassLoaderException $e) {
-      return FALSE;
-    }
+    return static::autoloadPaths($class);
   }
 
   /**
@@ -79,4 +65,30 @@ class Loader implements LoaderInterface {
     return '\\' . $class;
   }
 
+  /**
+   * Helper function to autoload path based files.
+   *
+   * @param string $class
+   *   The requested class.
+   *
+   * @return bool
+   *   TRUE if the class was found. FALSE otherwise.
+   */
+  protected static function autoloadPaths($class) {
+    $class = static::prefixClass($class);
+    if (!in_array($class, array_keys(static::$classMap))) {
+      return FALSE;
+    }
+    try {
+      $resolver = new TokenResolver(static::$classMap[$class]);
+      $finder = $resolver->resolve();
+      // Have the path finder require the file and return TRUE or FALSE if it
+      // found the file or not.
+      $finder->requireFile(static::$seed);
+      return TRUE;
+    }
+    catch (ClassLoaderException $e) {
+      return FALSE;
+    }
+  }
 }

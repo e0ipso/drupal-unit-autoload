@@ -2,10 +2,10 @@
 
 namespace Drupal\Composer\ClassLoader;
 
-require_once 'vendor/autoload.php';
+$loader = require_once 'vendor/autoload.php';
 
 // Register the class loader.
-$bootstrap = new AutoloaderBootstrap();
+$bootstrap = new AutoloaderBootstrap($loader);
 $bootstrap->register();
 
 /**
@@ -18,6 +18,17 @@ $bootstrap->register();
 class AutoloaderBootstrap {
 
   const AUTOLOAD_FUNCTION = '\Drupal\Composer\ClassLoader\Loader::autoload';
+  const COMPOSER_CONFIGURATION_NAME = 'composer.json';
+
+  /**
+   * Constructs a AutoloaderBootstrap object.
+   *
+   * @param \Composer\Autoload\ClassLoader $loader
+   *   The Composer class loader.
+   */
+  public function __construct(\Composer\Autoload\ClassLoader $loader) {
+    $this->loader = $loader;
+  }
 
   /**
    * Register the autoloader if it is not registered.
@@ -28,16 +39,10 @@ class AutoloaderBootstrap {
         return;
       }
     }
-    // TODO: Load the *correct* composer.json in a decent OO way.
     // Parse the composer.json.
-    $composer_file = 'composer.json';
-    $composer_config = json_decode(file_get_contents($composer_file));
-    if (empty($composer_config->{'class-loader'}->{'drupal-path'})) {
-      return;
-    }
-    Loader::setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
-    Loader::setSeed('composer.json');
-    $this::load();
+    $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
+    $this->registerDrupalPaths($composer_config);
+    $this->registerPsr($composer_config);
   }
 
   /**
@@ -59,6 +64,31 @@ class AutoloaderBootstrap {
    */
   protected static function unload() {
     spl_autoload_unregister(static::AUTOLOAD_FUNCTION);
+  }
+
+  /**
+   * Register the path based autoloader.
+   *
+   * @param object $composer_config
+   *   The Composer configuration.
+   */
+  protected function registerDrupalPaths($composer_config) {
+    if (empty($composer_config->{'class-loader'}->{'drupal-path'})) {
+      return;
+    }
+    Loader::setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
+    Loader::setSeed('composer.json');
+    $this::load();
+  }
+
+  /**
+   * Use Composer's autoloader to register the PRS-0 and PSR-4 paths.
+   *
+   * @param object $composer_config
+   *   The Composer configuration.
+   */
+  protected function registerPsr($composer_config) {
+    // TODO: Implement this.
   }
 
 }
