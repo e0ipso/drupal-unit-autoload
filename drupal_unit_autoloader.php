@@ -89,10 +89,11 @@ class AutoloaderBootstrap {
     if (empty($psr4) && empty($psr0)) {
       return;
     }
-    Loader::registerPsr(array(
+    Loader::setPsrClassMap(array(
       'psr-0' => $psr0,
       'psr-4' => $psr4,
-    ), $this->loader);
+    ));
+    Loader::registerPsr($this->loader);
   }
 
 }

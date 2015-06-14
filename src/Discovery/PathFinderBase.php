@@ -32,7 +32,7 @@ abstract class PathFinderBase implements PathFinderInterface {
    * {@inheritdoc}
    */
   public function requireFile($seed) {
-    $real_path = $this->find($seed) . $this->path;
+    $real_path = $this->find($seed);
     require_once $real_path;
   }
 

@@ -50,7 +50,7 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
       // Check if the current directory corresponds to the contrib we are
       // looking for.
       if ($this->isWantedContrib($dir)) {
-        return $this->cleanDirPath($dir->getPathName());
+        return $this->cleanDirPath($dir->getPathName()) . $this->path;
       }
     }
     throw new ClassLoaderException(sprintf('Drupal module "%s" could not be found in the Drupal tree that contains: %s.', $this->moduleName, $seed));

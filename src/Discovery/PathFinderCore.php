@@ -27,7 +27,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     }
     do {
       if ($this->isDrupalRoot($directory)) {
-        return $this->cleanDirPath($directory->getPathName());
+        return $this->cleanDirPath($directory->getPathName()) . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));

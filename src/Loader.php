@@ -58,7 +58,7 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function setPsrClassMap(array $class_map) {
-    static::$classMap = $class_map;
+    static::$psrClassMap = $class_map;
   }
 
   /**
@@ -114,24 +114,22 @@ class Loader implements LoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public static function registerPsr($partial_namespace, \Composer\Autoload\ClassLoader $loader) {
-    $partial_namespace = static::prefixClass($partial_namespace);
-    if (!in_array($partial_namespace, array_keys(static::$classMap))) {
-      return FALSE;
-    }
+  public static function registerPsr(\Composer\Autoload\ClassLoader $loader) {
     $psrs = array(
       'psr-0' => 'add',
       'psr-4' => 'addPsr4',
     );
     foreach ($psrs as $psr => $loader_method) {
-      try {
-        $resolver = new TokenResolver(static::$classMap[$psr][$partial_namespace]);
-        $finder = $resolver->resolve();
-        // Get the real path of the prefix.
-        $real_path = $finder->find(static::$seed);
-        $loader->{$loader_method}($partial_namespace, $real_path);
+      foreach (static::$psrClassMap[$psr] as $partial_namespace) {
+        try {
+          $resolver = new TokenResolver($partial_namespace);
+          $finder = $resolver->resolve();
+          // Get the real path of the prefix.
+          $real_path = $finder->find(static::$seed);
+          $loader->{$loader_method}($partial_namespace, $real_path);
+        }
+        catch (ClassLoaderException $e) {}
       }
-      catch (ClassLoaderException $e) {}
     }
   }
 
