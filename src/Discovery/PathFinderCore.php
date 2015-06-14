@@ -27,7 +27,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     }
     do {
       if ($this->isDrupalRoot($directory)) {
-        return $directory . '/' . $this->path;
+        return $this->cleanDirPath($directory->getPathName()) . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));
@@ -69,9 +69,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    */
   protected function getParentDirectory(\DirectoryIterator $directory) {
     $path_name = $directory->getPathname();
-    // Remove annoying /. at the end.
-    $path_name = rtrim($path_name, '.');
-    $path_name = rtrim($path_name, '/');
+    $path_name = $this->cleanDirPath($path_name);
 
     $path_info = pathinfo($path_name);
     if (!empty($path_info['dirname'])) {
@@ -81,6 +79,22 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       catch (\UnexpectedValueException $e) {}
     }
     return NULL;
+  }
+
+  /**
+   * Cleans a directory path by removing /. from the end.
+   *
+   * @param string $dir_path
+   *   The path name to clean.
+   *
+   * @return string
+   *   The clean path name.
+   */
+  protected function cleanDirPath($dir_path) {
+    // Remove annoying /. at the end.
+    $dir_path = rtrim($dir_path, '.');
+    $dir_path = rtrim($dir_path, '/');
+    return $dir_path;
   }
 
 }
