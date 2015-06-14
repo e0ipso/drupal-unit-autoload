@@ -83,10 +83,6 @@ class TokenResolver implements TokenResolverInterface {
    *   The token found. NULL otherwise.
    */
   protected function getToken() {
-    static $token_name;
-    if (isset($token_name)) {
-      return $token_name;
-    }
     foreach (array_keys($this->supportedTokens) as $token_name) {
       if (strpos($this->path, $token_name) === 0) {
         return $token_name;
