@@ -28,7 +28,11 @@ class AutoloaderBootstrap {
     }
     // TODO: Load the *correct* composer.json in a decent OO way.
     // Parse the composer.json.
-    Loader::setClassMap(json_decode(file_get_contents('composer.json')));
+    $composer_config = json_decode(file_get_contents('composer.json'));
+    if (empty($composer_config['class-loader']['drupal-path'])) {
+      return;
+    }
+    Loader::setClassMap($composer_config['class-loader']['drupal-path']);
     $this::load();
   }
 
