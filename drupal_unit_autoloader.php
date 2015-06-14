@@ -3,9 +3,7 @@
 namespace Drupal\Composer\ClassLoader;
 
 return function ($loader) {
-  $bootstrap = new AutoloaderBootstrap($loader);
-  // Register the class loader.
-  $bootstrap->register();
+  return new AutoloaderBootstrap($loader);
 };
 
 /**
@@ -43,13 +41,6 @@ class AutoloaderBootstrap {
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
-  }
-
-  /**
-   * Destructs an AutoloaderBootstrap object.
-   */
-  public function __destruct() {
-    $this::unload();
   }
 
   /**
