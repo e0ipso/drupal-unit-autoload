@@ -25,8 +25,8 @@ class TokenResolver implements TokenResolverInterface {
    * @var array
    */
   private $supportedTokens = array(
-    'DRUPAL_ROOT' => 'Discovery/PathFinderCore',
-    'DRUPAL_CONTRIB' => 'Discovery/PathFinderContrib',
+    'DRUPAL_ROOT' => 'Drupal\Composer\ClassLoader\Discovery\PathFinderCore',
+    'DRUPAL_CONTRIB' => 'Drupal\Composer\ClassLoader\Discovery\PathFinderContrib',
   );
 
   /**

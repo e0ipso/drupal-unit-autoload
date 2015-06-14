@@ -44,9 +44,12 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    *   TRUE if the passed directory is the Drupal root.
    */
   protected function isDrupalRoot(\DirectoryIterator $directory) {
+    // We need to clone the $directory object to avoid modifying its internal
+    // operator.
+    $d = clone $directory;
     // Check if there is a COPYRIGHT.txt file in the directory.
-    foreach ($directory as $item) {
-      if (!$item->isFile() && $item->getFilename() != 'COPYRIGHT.txt') {
+    foreach ($d as $item) {
+      if (!$item->isFile() || $item->getFilename() != 'COPYRIGHT.txt') {
         continue;
       }
       $line = fgets(fopen($item->getPathname(), 'r'));
@@ -66,6 +69,10 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    */
   protected function getParentDirectory(\DirectoryIterator $directory) {
     $path_name = $directory->getPathname();
+    // Remove annoying /. at the end.
+    $path_name = rtrim($path_name, '.');
+    $path_name = rtrim($path_name, '/');
+
     $path_info = pathinfo($path_name);
     if (!empty($path_info['dirname'])) {
       try {

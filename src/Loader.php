@@ -2,11 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\Composer\ClassLoader\LoaderInterface.
+ * Contains Drupal\Composer\ClassLoader\Loader.
  */
 
 namespace Drupal\Composer\ClassLoader;
-
 
 class Loader implements LoaderInterface {
 
@@ -33,7 +32,8 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function autoload($class) {
-    if (!in_array($class, static::$classMap)) {
+    $class = static::prefixClass($class);
+    if (!in_array($class, array_keys(static::$classMap))) {
       return FALSE;
     }
     try {
@@ -61,6 +61,22 @@ class Loader implements LoaderInterface {
    */
   public static function setSeed($seed) {
     static::$seed = $seed;
+  }
+
+  /**
+   * Prefixes a class with preceding backslash if necessary.
+   *
+   * @param string $class
+   *   The class to prefix.
+   *
+   * @return string
+   *   The prefixed class.
+   */
+  protected static function prefixClass($class) {
+    if (strpos($class, '\\') === 0) {
+      return $class;
+    }
+    return '\\' . $class;
   }
 
 }

@@ -2,6 +2,8 @@
 
 namespace Drupal\Composer\ClassLoader;
 
+require_once 'vendor/autoload.php';
+
 // Register the class loader.
 $bootstrap = new AutoloaderBootstrap();
 $bootstrap->register();
@@ -28,11 +30,13 @@ class AutoloaderBootstrap {
     }
     // TODO: Load the *correct* composer.json in a decent OO way.
     // Parse the composer.json.
-    $composer_config = json_decode(file_get_contents('composer.json'));
-    if (empty($composer_config['class-loader']['drupal-path'])) {
+    $composer_file = 'composer.json';
+    $composer_config = json_decode(file_get_contents($composer_file));
+    if (empty($composer_config->{'class-loader'}->{'drupal-path'})) {
       return;
     }
-    Loader::setClassMap($composer_config['class-loader']['drupal-path']);
+    Loader::setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
+    Loader::setSeed('composer.json');
     $this::load();
   }
 

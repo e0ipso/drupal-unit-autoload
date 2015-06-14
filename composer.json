@@ -11,10 +11,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Drupal\\Composer\\ClassLoader": "src/"
-    },
-    "files": [
-      "bootstrap.php"
-    ]
+      "Drupal\\Composer\\ClassLoader\\": "src"
+    }
   }
 }
