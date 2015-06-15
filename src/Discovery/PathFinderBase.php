@@ -32,6 +32,7 @@ abstract class PathFinderBase implements PathFinderInterface {
    * {@inheritdoc}
    */
   public function requireFile($seed) {
+    // Get the real path to the file.
     $real_path = $this->find($seed);
     require_once $real_path;
   }
@@ -46,7 +47,8 @@ abstract class PathFinderBase implements PathFinderInterface {
    *   The clean path name.
    */
   protected function cleanDirPath($dir_path) {
-    // Remove annoying /. at the end.
+    // Remove annoying /. at the end. This is needed because the
+    // DirectoryIterator adds that to the end of the dir name.
     $dir_path = rtrim($dir_path, '.');
     $dir_path = rtrim($dir_path, '/');
     return $dir_path;
