@@ -9,6 +9,11 @@ namespace Drupal\Composer\ClassLoader\Discovery\Tests;
 
 use Drupal\Composer\ClassLoader\Discovery\PathFinderBase;
 
+/**
+ * Class PathFinderBase
+ * @coversDefaultClass \Drupal\Composer\ClassLoader\Discovery\PathFinderBase
+ * @package Drupal\Composer\ClassLoader\Discovery\Tests
+ */
 class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
 
   /**
