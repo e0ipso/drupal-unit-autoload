@@ -1,0 +1,12 @@
+{
+  "require": {
+    "phpunit/phpunit": "4.7.*",
+    "mockery/mockery": "0.9.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\Composer\\ClassLoader\\": "../src/",
+      "Drupal\\Composer\\ClassLoader\\Tests\\": "src/"
+    }
+  }
+}
