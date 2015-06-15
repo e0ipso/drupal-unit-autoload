@@ -4,7 +4,6 @@
 
 # Drupal Unit Autoload
 
-[![Join the chat at https://gitter.im/mateu-aguilo-bosch/drupal-unit-autoload](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mateu-aguilo-bosch/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Have you ever wanted to add **PHPUnit*t* tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
 with autoloading the classes that you have in your Drupal installation.
 
