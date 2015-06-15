@@ -84,7 +84,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     $path_info = pathinfo($path_name);
     if (!empty($path_info['dirname']) && $path_info['dirname'] !== '/') {
       try {
-        return new \DirectoryIterator(dirname($path_info['dirname']));
+        return new \DirectoryIterator($path_info['dirname']);
       }
       catch (\UnexpectedValueException $e) {}
     }
