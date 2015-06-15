@@ -29,7 +29,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     // up and up and up until we reach the Drupal root.
     do {
       if ($this->isDrupalRoot($directory)) {
-        return $this->cleanDirPath($directory->getPathName()) . $this->path;
+        return dirname(realpath($this->cleanDirPath($directory->getPathName())));
       }
     }
     while ($directory = $this->getParentDirectory($directory));
@@ -82,13 +82,13 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
 
     // Get the parent directory and return a DirectoryIterator.
     $path_info = pathinfo($path_name);
-    if (!empty($path_info['dirname'])) {
+    if (!empty($path_info['dirname']) && $path_info['dirname'] !== '/') {
       try {
-        return new \DirectoryIterator($path_info['dirname']);
+        return new \DirectoryIterator(dirname($path_info['dirname']));
       }
       catch (\UnexpectedValueException $e) {}
     }
-    throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $path_name));
+    return NULL;
   }
 
 }

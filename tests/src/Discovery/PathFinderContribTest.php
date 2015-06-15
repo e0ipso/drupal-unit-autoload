@@ -37,5 +37,15 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('mymodule', $value);
   }
 
+  /**
+   * Tests that find() works properly.
+   *
+   * @covers ::find()
+   */
+  public function testFind() {
+    $pathFinder = new PathFinderContrib(['.', 'testmodule']);
+    $path = $pathFinder->find('data/docroot/');
+    $this->assertEquals(realpath('data/docroot/sites/all/modules'), $path);
+  }
 }
 
