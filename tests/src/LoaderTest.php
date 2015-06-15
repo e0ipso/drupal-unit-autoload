@@ -21,7 +21,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    */
   public function testAutoload() {
     Loader::setClassMap([
-      '\\Acme' => '../data/acme.inc'
+      '\\Acme' => './data/acme.inc'
     ]);
     Loader::setSeed(__DIR__);
     $this->assertTrue(Loader::autoload('Acme'));

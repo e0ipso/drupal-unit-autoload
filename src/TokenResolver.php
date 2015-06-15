@@ -45,7 +45,7 @@ class TokenResolver implements TokenResolverInterface {
   public function resolve() {
     // If the path is not tokenized, then return the NULL discovery object.
     if (file_exists($this->path)) {
-      return new Discovery\PathFinderNull($this->path);
+      return new Discovery\PathFinderNull(array($this->path));
     }
     if (!$this->getToken()) {
       return NULL;
