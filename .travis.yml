@@ -24,7 +24,9 @@ script:
   - cd ..
 
 after_script:
+  - cd ./tests
   - php vendor/bin/coveralls
+
 
 notifications:
   webhooks:
