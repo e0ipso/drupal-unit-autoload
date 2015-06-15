@@ -29,6 +29,7 @@ script:
   - cd ./tests
   - ./run-tests.sh
   - ./run-coverage.sh
+  - cd ..
 
 after_script:
   - php vendor/bin/coveralls
