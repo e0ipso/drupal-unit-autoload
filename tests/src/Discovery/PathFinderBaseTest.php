@@ -17,6 +17,20 @@ use Drupal\Composer\ClassLoader\Discovery\PathFinderBase;
 class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
 
   /**
+   * Tests that constructor works properly.
+   *
+   * @covers ::__construct()
+   */
+
+  public function testConstructor() {
+    $pathFinder = new FakePathFinder(['./testFolder/']);
+    $property = new \ReflectionProperty($pathFinder, 'path');
+    $property->setAccessible(true);
+    $value = $property->getValue($pathFinder);
+    $this->assertEquals('./testFolder/', $value);
+  }
+
+  /**
    * Tests that PathFinderBase::requireFile() works properly.
    *
    * @covers ::requireFile()
