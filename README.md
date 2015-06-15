@@ -1,5 +1,5 @@
 # Drupal Unit Autoload
-Have you ever wanted to add **PHPUnit** tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
+Have you ever wanted to add **PHPUnit*t* tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
 with autoloading the classes that you have in your Drupal installation.
 
 ## The Problem
@@ -26,7 +26,7 @@ Imagine this possibility:
 
 It seems that if you wanted to provide the path to `includes/cache.inc` to make `\DrupalCacheInterface` available, then
 you would need to add a path like: `../../../../../../includes/cache.inc`. But what if someone decides to install your
-`car` module in `sites/all/modules/car`? That path that you provided in the module will not work in that situation. The
+`car` module in `sites/all/modules/car`? That path you provided in the module will not work in that situation. The
 correct one would be `../../../includes/cache.inc`. Basically every site installation may need a different path.
 
 The problem that this project aims to solve is to give you a way to provide a single path in your code that will work in
@@ -35,7 +35,7 @@ all those scenarios.
 ## The Solution
 Meet the Drupal Unit Autoload.
 
-The only thing that that you need to do is add a new `composer.json` key with tokens in the path.
+The only thing that you need to do is add a new `composer.json` key with tokens in the path.
 
 Inside the folder where you have your unit tests you will need to have a `composer.json` file that has:
 
@@ -61,7 +61,11 @@ Inside the folder where you have your unit tests you will need to have a `compos
       "\\Drupal": "DRUPAL_CONTRIB<service_container>/lib/Drupal.php"
     },
     "psr-4": {
-      "Drupal\\service_container\\": "DRUPAL_CONTRIB<service_container>/src"
+      "Drupal\\service_container\\": "DRUPAL_CONTRIB<service_container>/src",
+      "Drupal\\Core\\": [
+        "DRUPAL_CONTRIB<service_container>/lib/Core",
+        "DRUPAL_CONTRIB<contrib>/src/DrupalCore"
+      ]
     }
   }
 }
@@ -79,7 +83,7 @@ At this point you only need is add the new _class-loader_ key in your composer f
 In the paths that you provide, you will be able to include two tokens: `DRUPAL_ROOT` and `DRUPAL_CONTRIB<modulename>`.
 Those tokens will be expanded to the real paths that they represent. This way, providing `DRUPAL_CONTRIB<ctools>` can end up expanding in:
   - `/var/www/docroot/sites/all/modules/ctools` in one Drupal installation.
-  - `/var/www/docroot/sites/default/modules/contrib/ctools` in another installation.
+  - `/User/Sites/drupal-site/sites/default/modules/contrib/ctools` in another installation.
   
 The important thing to note is that your code ships with the same _tokenized_ path for everyone, without caring about
 where the dependencies are installed.
