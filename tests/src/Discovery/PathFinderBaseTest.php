@@ -17,6 +17,18 @@ use Drupal\Composer\ClassLoader\Discovery\PathFinderBase;
 class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
 
   /**
+   * Tests that PathFinderBase::requireFile() works properly.
+   *
+   * @covers ::requireFile()
+   */
+  public function testRequireFile() {
+    $pathFinder = new FakePathFinder(['']);
+    $pathFinder->requireFile(realpath('data/acme.inc'));
+    $included = get_included_files();
+    $this->assertTrue(in_array(realpath('data/acme.inc'), $included));
+  }
+
+  /**
    * Tests that PathFinderBase::cleanDirPath() works properly.
    * @dataProvider cleanDirPathProvider
    *
@@ -49,7 +61,7 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
 class FakePathFinder extends PathFinderBase {
 
   public function find($seed) {
-
+    return realpath($seed);
   }
 
 }
