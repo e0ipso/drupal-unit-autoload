@@ -2,7 +2,7 @@
   "name": "mateu-aguilo-bosch/drupal-unit-autoload",
   "description": "Allows you to load classes in non standard unknown file locations.",
   "minimum-stability": "stable",
-  "license": "GPLv2",
+  "license": "GPL-2.0",
   "authors": [
     {
       "name": "Mateu Aguiló Bosch",
