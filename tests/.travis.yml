@@ -1,0 +1,43 @@
+# @file
+# .travis.yml - Drupal for Travis CI Integration
+#
+# Template provided by https://github.com/LionsAd/drupal_ti.
+#
+# Based for simpletest upon:
+#   https://github.com/sonnym/travis-ci-drupal-module-example
+
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: hhvm
+
+env:
+  global:
+    # add composer's global bin directory to the path
+    # see: https://github.com/drush-ops/drush#install---composer
+    - PATH="$PATH:$HOME/.composer/vendor/bin"
+
+script:
+  - cd ./tests
+  - ./run-tests.sh
+  - ./run-coverage.sh
+
+after_script:
+  - php vendor/bin/coveralls
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/c2147c4ed13ddd031b30
+      - https://webhooks.gitter.im/e/45a8fac3fb8fd2ae907d
+    on_success: change
+    on_failure: always
+    on_start: false

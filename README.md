@@ -1,3 +1,7 @@
+[![Coverage Status](https://coveralls.io/repos/mateu-aguilo-bosch/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/mateu-aguilo-bosch/drupal-unit-autoload) [![Build Status](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload.svg)](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload)
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mateu-aguilo-bosch/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 # Drupal Unit Autoload
 Have you ever wanted to add **PHPUnit** tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
 with autoloading the classes that you have in your Drupal installation.
