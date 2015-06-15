@@ -120,15 +120,20 @@ class Loader implements LoaderInterface {
       'psr-4' => 'addPsr4',
     );
     foreach ($psrs as $psr => $loader_method) {
-      foreach (static::$psrClassMap[$psr] as $partial_namespace => $tokenized_path) {
-        try {
-          $resolver = new TokenResolver($tokenized_path);
-          $finder = $resolver->resolve();
-          // Get the real path of the prefix.
-          $real_path = $finder->find(static::$seed);
-          $loader->{$loader_method}($partial_namespace, $real_path);
+      foreach (static::$psrClassMap[$psr] as $partial_namespace => $tokenized_paths) {
+        if (!is_array($tokenized_paths)) {
+          $tokenized_paths = array($tokenized_paths);
         }
-        catch (ClassLoaderException $e) {}
+        foreach ($tokenized_paths as $tokenized_path) {
+          try {
+            $resolver = new TokenResolver($tokenized_path);
+            $finder = $resolver->resolve();
+            // Get the real path of the prefix.
+            $real_path = $finder->find(static::$seed);
+            $loader->{$loader_method}($partial_namespace, $real_path);
+          }
+          catch (ClassLoaderException $e) {}
+        }
       }
     }
   }

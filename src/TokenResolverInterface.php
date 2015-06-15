@@ -17,4 +17,5 @@ interface TokenResolverInterface {
    *   The path finder class or NULL.
    */
   public function resolve();
+
 }
