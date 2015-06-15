@@ -51,13 +51,26 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function setClassMap(array $class_map) {
-    static::$classMap = $class_map;
+    // Remove the leading \ from the class names.
+    $unprefixed_class_map = array();
+    foreach ($class_map as $class_name => $tokenized_path) {
+      $unprefixed_class_map[static::unprefixClass($class_name)] = $tokenized_path;
+    }
+    static::$classMap = $unprefixed_class_map;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function setPsrClassMap(array $class_map) {
+    // Remove the leading \ from the partial namespaces.
+    $unprefixed_class_map = array();
+    foreach ($class_map as $psr => $psr_class_map) {
+      $unprefixed_class_map[$psr] = array();
+      foreach ($psr_class_map as $class_name => $tokenized_path) {
+        $unprefixed_class_map[$psr][static::unprefixClass($class_name)] = $tokenized_path;
+      }
+    }
     static::$psrClassMap = $class_map;
   }
 
@@ -69,7 +82,7 @@ class Loader implements LoaderInterface {
   }
 
   /**
-   * Prefixes a class with preceding backslash if necessary.
+   * Strips a class name of a preceding backslash if necessary.
    *
    * @param string $class
    *   The class to prefix.
@@ -77,11 +90,11 @@ class Loader implements LoaderInterface {
    * @return string
    *   The prefixed class.
    */
-  protected static function prefixClass($class) {
-    if (strpos($class, '\\') === 0) {
+  protected static function unprefixClass($class) {
+    if (strpos($class, '\\') !== 0) {
       return $class;
     }
-    return '\\' . $class;
+    return substr($class, 1);
   }
 
   /**
@@ -94,7 +107,9 @@ class Loader implements LoaderInterface {
    *   TRUE if the class was found. FALSE otherwise.
    */
   protected static function autoloadPaths($class) {
-    $class = static::prefixClass($class);
+    $class = static::unprefixClass($class);
+    // If the class that PHP is trying to find is not in the class map, built
+    // from the composer configuration, then bail.
     if (!in_array($class, array_keys(static::$classMap))) {
       return FALSE;
     }
@@ -107,6 +122,7 @@ class Loader implements LoaderInterface {
       return TRUE;
     }
     catch (ClassLoaderException $e) {
+      // If there was an error, inform PHP that the class could not be found.
       return FALSE;
     }
   }
@@ -115,17 +131,32 @@ class Loader implements LoaderInterface {
    * {@inheritdoc}
    */
   public static function registerPsr(\Composer\Autoload\ClassLoader $loader) {
+    // Composer's autoloader uses a different method to add each PSR partial
+    // namespace.
     $psrs = array(
       'psr-0' => 'add',
       'psr-4' => 'addPsr4',
     );
     foreach ($psrs as $psr => $loader_method) {
+      // The $psrClassMap contains an array for psr-0 and an array for psr-4.
+      // Each one of those contains an array where the keys are the partial
+      // namespace, and the value is an array of tokenized paths where those
+      // partial namespaces can be found.
+      // Ex:
+      //  [
+      //    'psr-0' => [
+      //      [ 'Drupal\\plug\\' => ['DRUPAL_CONTRIB<plug>/lib', …] ],
+      //    ],
+      //  ]
       foreach (static::$psrClassMap[$psr] as $partial_namespace => $tokenized_paths) {
         if (!is_array($tokenized_paths)) {
+          // If a string was passed, then convert it to an array for
+          // consistency.
           $tokenized_paths = array($tokenized_paths);
         }
         foreach ($tokenized_paths as $tokenized_path) {
           try {
+            // Find the real path for the tokenized one.
             $resolver = new TokenResolver($tokenized_path);
             $finder = $resolver->resolve();
             // Get the real path of the prefix.

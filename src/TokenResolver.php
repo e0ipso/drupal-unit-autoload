@@ -50,7 +50,11 @@ class TokenResolver implements TokenResolverInterface {
     if (!$this->getToken()) {
       return NULL;
     }
+    // Get the name of the class of the PathFinder depending on if we are
+    // looking for Drupal root or contrib path.
     $class_name = $this->getClassName();
+    // Remove the leading token from the tokenized path to get the relative path
+    // (to the Drupal root or the module/theme path).
     $arguments[] = $this->cleanToken();
     // Add more arguments to the constructor, like the module name.
     $arguments = array_merge($arguments, $this->parseArguments());
@@ -83,6 +87,8 @@ class TokenResolver implements TokenResolverInterface {
    *   The token found. NULL otherwise.
    */
   protected function getToken() {
+    // Iterate over the supported tokens to find the token in the tokenized
+    // path.
     foreach (array_keys($this->supportedTokens) as $token_name) {
       if (strpos($this->path, $token_name) === 0) {
         return $token_name;

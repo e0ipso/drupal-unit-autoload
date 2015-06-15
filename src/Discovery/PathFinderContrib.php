@@ -35,16 +35,23 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
    * {@inheritdoc}
    */
   public function find($seed) {
+    // To find contrib, we need to know where core is first. Pass the empty
+    // string to as the path so we get the path for core itself -and not a path
+    // relative to the core install-.
     $core_finder = new PathFinderCore(array(''));
     if (!$core_path = $core_finder->find($seed)) {
       return NULL;
     }
+    // Create the RecursiveDirectoryIterator on the core directory.
     $core_directory = new \RecursiveDirectoryIterator($core_path . '/sites', \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS);
+    // Create an iterator that will go recursively through all the files and
+    // directories -because of SELF_FIRST-.
     $files_iterator = new \RecursiveIteratorIterator($core_directory, \RecursiveIteratorIterator::SELF_FIRST);
     // Iterate over all of the directories under the sites directory.
     foreach ($files_iterator as $path_name => $dir) {
       /** @var $dir \SplFileInfo */
       if (!$dir->isDir()) {
+        // Do not scan all files, just directories.
         continue;
       }
       // Check if the current directory corresponds to the contrib we are
@@ -65,7 +72,7 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
    *   TRUE if the contrib is detected. FALSE otherwise.
    */
   protected function isWantedContrib(\SplFileInfo $dir) {
-    $info_file = $dir->getPathname() . '/' . $this->moduleName . '.info';
+    $info_file = $this->cleanDirPath($dir->getPathName()) . '/' . $this->moduleName . '.info';
     return file_exists($info_file);
   }
 

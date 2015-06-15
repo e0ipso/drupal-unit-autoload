@@ -25,12 +25,16 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       $path_info = pathinfo($seed);
       $directory = new \DirectoryIterator($path_info['dirname']);
     }
+    // Starting at the directory containing the seed path, we go one directory
+    // up and up and up until we reach the Drupal root.
     do {
       if ($this->isDrupalRoot($directory)) {
         return $this->cleanDirPath($directory->getPathName()) . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));
+    // If we have not returned, that means that the Drupal core directory could
+    // not be found.
     throw new ClassLoaderException(sprintf('Drupal core directory could not be found as a parent of: %s.', $seed));
   }
 
@@ -52,6 +56,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       if (!$item->isFile() || $item->getFilename() != 'COPYRIGHT.txt') {
         continue;
       }
+      // Make sure that the COPYRIGHT.txt file corresponds to Drupal.
       $line = fgets(fopen($item->getPathname(), 'r'));
       return strpos($line, 'All Drupal code is Copyright') === 0;
     }
@@ -64,13 +69,18 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    * @param \DirectoryIterator $directory
    *   The current directory iterator.
    *
+   * @throws ClassLoaderException
+   *   If no parent directory could be found.
+   *
    * @return \DirectoryIterator
    *   The parent directory.
    */
   protected function getParentDirectory(\DirectoryIterator $directory) {
+    // Get the path name of the directory.
     $path_name = $directory->getPathname();
     $path_name = $this->cleanDirPath($path_name);
 
+    // Get the parent directory and return a DirectoryIterator.
     $path_info = pathinfo($path_name);
     if (!empty($path_info['dirname'])) {
       try {
@@ -78,7 +88,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       }
       catch (\UnexpectedValueException $e) {}
     }
-    return NULL;
+    throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $path_name));
   }
 
 }
