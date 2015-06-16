@@ -84,7 +84,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Tests that Loader::setClassMap works properly.
+   * Tests that Loader::setPsrClassMap works properly.
    *
    * @dataProvider setPsrClassMapProvider
    *
