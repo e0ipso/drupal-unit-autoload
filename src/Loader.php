@@ -71,7 +71,7 @@ class Loader implements LoaderInterface {
         $unprefixed_class_map[$psr][static::unprefixClass($class_name)] = $tokenized_path;
       }
     }
-    static::$psrClassMap = $class_map;
+    static::$psrClassMap = $unprefixed_class_map;
   }
 
   /**

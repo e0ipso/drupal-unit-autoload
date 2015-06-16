@@ -84,6 +84,37 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Tests that Loader::setClassMap works properly.
+   *
+   * @dataProvider setPsrClassMapProvider
+   *
+   * @covers ::setPsrClassMap()
+   */
+  public function test_setPsrClassMap($given, $expected) {
+    Loader::setPsrClassMap($given);
+    $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'psrClassMap');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue();
+    $this->assertEquals($expected, $value);
+  }
+
+  /**
+   * Provider for test_setClassMap.
+   */
+  public static function setPsrClassMapProvider() {
+    return [
+      [
+        ['psr-4' => ['\\Foo' => 'bar'], 'psr-0' => ['\\Baz' => 'oof']],
+        ['psr-4' => ['Foo' => 'bar'], 'psr-0' => ['Baz' => 'oof']]
+      ],
+      [
+        ['psr-4' => ['Foo' => 'bar'], 'psr-0' => ['Baz' => 'oof']],
+        ['psr-4' => ['Foo' => 'bar'], 'psr-0' => ['Baz' => 'oof']]
+      ],
+    ];
+  }
+
+  /**
    * Tests that Loader::setSeed works properly.
    *
    * @covers ::setSeed()
