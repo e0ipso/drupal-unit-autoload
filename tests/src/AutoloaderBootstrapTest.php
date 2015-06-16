@@ -30,4 +30,16 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($loader, $value);
   }
 
+  /**
+   * Tests the ::register() method.
+   */
+  public function test_register() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader);
+    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'loader');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue($autoloader);
+    $this->assertEquals($loader, $value);
+  }
+
 }
