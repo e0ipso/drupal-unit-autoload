@@ -7,6 +7,8 @@
 
 namespace Drupal\Composer\ClassLoader\Tests;
 
+use Drupal\Composer\ClassLoader\AutoloaderBootstrap;
+use Mockery as m;
 /**
  * Class AutoloaderBootstrapTest
  *
@@ -15,5 +17,17 @@ namespace Drupal\Composer\ClassLoader\Tests;
  * @package Drupal\Composer\ClassLoader\Tests
  */
 class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
+
+  /**
+   * Tests the ::__construct() method.
+   */
+  public function test___construct() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader);
+    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'loader');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue($autoloader);
+    $this->assertEquals($loader, $value);
+  }
 
 }

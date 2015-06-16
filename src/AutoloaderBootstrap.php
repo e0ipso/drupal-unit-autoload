@@ -20,6 +20,13 @@ class AutoloaderBootstrap {
   const COMPOSER_CONFIGURATION_NAME = 'composer.json';
 
   /**
+   * Holds the composer autoloader.
+   *
+   * @var \Composer\Autoload\ClassLoader
+   */
+  protected $loader;
+
+  /**
    * Constructs a AutoloaderBootstrap object.
    *
    * @param \Composer\Autoload\ClassLoader $loader
