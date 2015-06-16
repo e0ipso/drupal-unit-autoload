@@ -43,9 +43,9 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    * @covers ::find()
    */
   public function testFind() {
-    $pathFinder = new PathFinderContrib(['.', 'testmodule']);
-    $path = $pathFinder->find('data/docroot/');
-    $this->assertEquals(realpath('data/docroot/sites/all/modules'), $path);
+    $pathFinder = new PathFinderContrib(['', 'testmodule']);
+    $path = $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
+    $this->assertEquals(realpath('data/docroot/sites/all/modules/testmodule'), $path);
   }
 }
 
