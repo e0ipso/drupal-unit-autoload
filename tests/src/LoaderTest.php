@@ -7,6 +7,7 @@
 
 namespace Drupal\Composer\ClassLoader\Tests;
 use Drupal\Composer\ClassLoader\Loader;
+use Mockery as m;
 
 /**
  * Class LoaderTest
@@ -126,6 +127,37 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
     $reflection_property->setAccessible(TRUE);
     $value = $reflection_property->getValue();
     $this->assertEquals($seed, $value);
+  }
+
+  /**
+   * Tests that Loader::registerPsr works properly.
+   *
+   * @covers ::registerPsr()
+   */
+  public function test_registerPsr() {
+    // Mock the \Composer\Autoload\ClassLoader loader.
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $loader
+      ->shouldReceive('add')
+      ->twice();
+    $loader
+      ->shouldReceive('addPsr4')
+      ->once();
+
+    $psrClassMap = [
+      'psr-0' => [
+        'Drupal\\plug\\' => [
+          'DRUPAL_CONTRIB<testmodule>/testmodule.info',
+          'DRUPAL_ROOT/file.inc'
+        ],
+      ],
+      'psr-4' => [
+        'Drupal\\Kitten\\' => 'DRUPAL_ROOT/file.inc',
+      ],
+    ];
+    Loader::setPsrClassMap($psrClassMap);
+    Loader::setSeed('data/docroot/sites/all/modules/testmodule/composer.json');
+    Loader::registerPsr($loader);
   }
 
 }
