@@ -65,12 +65,12 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    *
    * @covers ::setClassMap()
    */
-  public function test_setClassMap() {
-    Loader::setClassMap(['\\Foo' => 'bar']);
+  public function test_setClassMap($given, $expected) {
+    Loader::setClassMap($given);
     $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'classMap');
     $reflection_property->setAccessible(TRUE);
     $value = $reflection_property->getValue();
-    $this->assertEquals(['Foo' => 'bar'], $value);
+    $this->assertEquals($expected, $value);
   }
 
   /**
