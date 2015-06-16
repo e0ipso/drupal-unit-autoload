@@ -10,8 +10,10 @@ namespace Drupal\Composer\ClassLoader\Discovery\Tests;
 use Drupal\Composer\ClassLoader\Discovery\PathFinderNull;
 
 /**
- * Class PathFinderBase
+ * Class PathFinderBaseTest
+ *
  * @coversDefaultClass \Drupal\Composer\ClassLoader\Discovery\PathFinderBase
+ *
  * @package Drupal\Composer\ClassLoader\Discovery\Tests
  */
 class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
@@ -21,7 +23,6 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
    *
    * @covers ::__construct()
    */
-
   public function testConstructor() {
     $pathFinder = new PathFinderNull(['./testFolder/']);
     $property = new \ReflectionProperty($pathFinder, 'path');
