@@ -20,7 +20,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     try {
       $directory = new \DirectoryIterator($seed);
     }
-    catch (\UnexpectedValueException $e) {
+    catch (\RuntimeException $e) {
       // If the seed was not a directory, then get the parent directory.
       $path_info = pathinfo($seed);
       $directory = new \DirectoryIterator($path_info['dirname']);
@@ -82,7 +82,7 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
 
     // Get the parent directory and return a DirectoryIterator.
     $path_info = pathinfo($path_name);
-    if (!empty($path_info['dirname'])) {
+    if (!empty($path_info['dirname']) && $path_info['dirname'] !== '/') {
       try {
         return new \DirectoryIterator($path_info['dirname']);
       }

@@ -39,9 +39,8 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
     // string to as the path so we get the path for core itself -and not a path
     // relative to the core install-.
     $core_finder = new PathFinderCore(array(''));
-    if (!$core_path = $core_finder->find($seed)) {
-      return NULL;
-    }
+    $core_path = $core_finder->find($seed);
+
     // Create the RecursiveDirectoryIterator on the core directory.
     $core_directory = new \RecursiveDirectoryIterator($core_path . '/sites', \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS);
     // Create an iterator that will go recursively through all the files and
@@ -72,7 +71,7 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
    *   TRUE if the contrib is detected. FALSE otherwise.
    */
   protected function isWantedContrib(\SplFileInfo $dir) {
-    $info_file = $this->cleanDirPath($dir->getPathName()) . '/' . $this->moduleName . '.info';
+    $info_file = $this->cleanDirPath($dir->getPathName()) . DIRECTORY_SEPARATOR . $this->moduleName . '.info';
     return file_exists($info_file);
   }
 
