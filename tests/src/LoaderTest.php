@@ -83,4 +83,18 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
+  /**
+   * Tests that Loader::setSeed works properly.
+   *
+   * @covers ::setSeed()
+   */
+  public function test_setSeed() {
+    $seed = 'Lorem ipsum';
+    Loader::setSeed($seed);
+    $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'seed');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue();
+    $this->assertEquals($seed, $value);
+  }
+
 }
