@@ -43,9 +43,54 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    * @covers ::find()
    */
   public function testFind() {
+    // 1. Test successful path.
     $pathFinder = new PathFinderContrib(['', 'testmodule']);
     $path = $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
     $this->assertEquals(realpath('data/docroot/sites/all/modules/testmodule'), $path);
   }
+
+  /**
+   * Tests that ::find() works properly.
+   *
+   * @expectedException \Drupal\Composer\ClassLoader\ClassLoaderException
+   *
+   * @covers ::find()
+   */
+  public function test_find__noDrupal() {
+    // 2. Test seed not in Drupal root.
+    $pathFinder = new PathFinderContrib(['', 'testmodule']);
+    $pathFinder->find('data/acme.inc');
+  }
+
+  /**
+   * Tests that ::find() works properly.
+   *
+   * @expectedException \Drupal\Composer\ClassLoader\ClassLoaderException
+   *
+   * @covers ::find()
+   */
+  public function test_find__noContrib() {
+    // 3. Test seed not in Drupal root.
+    $pathFinder = new PathFinderContrib(['', 'testmodule2']);
+    $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
+  }
+
+  /**
+   * Tests that ::isWantedContrib() works properly.
+   *
+   * @covers ::isWantedContrib()
+   */
+  public function test_isWantedContrib() {
+    $pathFinder = new PathFinderContrib(['', 'testmodule']);
+    $dir = new \SplFileInfo('data/docroot/sites/all/modules/testmodule');
+
+    $reflection_object = new \ReflectionObject($pathFinder);
+    $method = $reflection_object->getMethod('isWantedContrib');
+    $method->setAccessible(true);
+    $output = $method->invokeArgs($pathFinder, [$dir]);
+
+    $this->assertTrue($output);
+  }
+
 }
 
