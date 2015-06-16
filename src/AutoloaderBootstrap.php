@@ -27,13 +27,23 @@ class AutoloaderBootstrap {
   protected $loader;
 
   /**
+   * Holds the seed.
+   *
+   * @var string
+   */
+  protected $seed;
+
+  /**
    * Constructs a AutoloaderBootstrap object.
    *
    * @param \Composer\Autoload\ClassLoader $loader
    *   The Composer class loader.
+   * @param string $seed
+   *   The seed to find the drupal projects.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $loader) {
+  public function __construct(\Composer\Autoload\ClassLoader $loader, $seed = 'composer.json') {
     $this->loader = $loader;
+    $this->seed = $seed;
   }
 
   /**
@@ -47,7 +57,7 @@ class AutoloaderBootstrap {
     }
     // Parse the composer.json.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
-    Loader::setSeed('composer.json');
+    Loader::setSeed($this->seed);
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
   }

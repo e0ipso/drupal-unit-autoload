@@ -28,18 +28,25 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $reflection_property->setAccessible(TRUE);
     $value = $reflection_property->getValue($autoloader);
     $this->assertEquals($loader, $value);
+    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'seed');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue($autoloader);
+    $this->assertEquals('composer.json', $value);
   }
 
   /**
    * Tests the ::register() method.
+   *
+   * @covers ::load()
+   * @covers ::registerDrupalPaths()
    */
   public function test_register() {
     $loader = m::mock('\Composer\Autoload\ClassLoader');
-    $autoloader = new AutoloaderBootstrap($loader);
-    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'loader');
-    $reflection_property->setAccessible(TRUE);
-    $value = $reflection_property->getValue($autoloader);
-    $this->assertEquals($loader, $value);
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $autoloader->register();
+    $functions = spl_autoload_functions();
+    $expected = [['Drupal\Composer\ClassLoader\Loader', 'autoload']];
+    $this->assertTrue(in_array($expected, $functions));
   }
 
 }
