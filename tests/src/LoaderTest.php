@@ -24,7 +24,7 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_autoload() {
     Loader::setClassMap([
-      '\\Acme' => './data/acme.inc'
+      '\\Acme' => './data/acme.inc',
     ]);
     Loader::setSeed(__DIR__);
     $this->assertTrue(Loader::autoload('Acme'));
@@ -38,10 +38,24 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_autoload_unexisting() {
     Loader::setClassMap([
-      '\\Acme' => './data/acme.inc'
+      '\\Acme' => './data/acme.inc',
     ]);
     Loader::setSeed(__DIR__);
     $this->assertFalse(Loader::autoload('Invalid'));
+  }
+
+  /**
+   * Tests that Loader::autoload() works properly.
+   *
+   * @covers ::autoload()
+   * @covers ::autoloadPaths()
+   */
+  public function test_autoload_finderException() {
+    Loader::setClassMap([
+      '\\Acme' => 'DRUPAL_ROOT/file.inc',
+    ]);
+    Loader::setSeed(__DIR__);
+    $this->assertFalse(Loader::autoload('Acme'));
   }
 
 }
