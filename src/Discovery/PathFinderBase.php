@@ -50,7 +50,7 @@ abstract class PathFinderBase implements PathFinderInterface {
     // Remove annoying /. at the end. This is needed because the
     // DirectoryIterator adds that to the end of the dir name.
     $dir_path = rtrim($dir_path, '.');
-    $dir_path = rtrim($dir_path, '/');
+    $dir_path = rtrim($dir_path, DIRECTORY_SEPARATOR);
     return $dir_path;
   }
 
