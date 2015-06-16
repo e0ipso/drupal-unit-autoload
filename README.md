@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/mateu-aguilo-bosch/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/mateu-aguilo-bosch/drupal-unit-autoload) [![Build Status](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload.svg)](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload)
+[![Coverage Status](https://coveralls.io/repos/mateu-aguilo-bosch/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/mateu-aguilo-bosch/drupal-unit-autoload) [![Build Status](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload.svg?branch=master)](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mateu-aguilo-bosch/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
