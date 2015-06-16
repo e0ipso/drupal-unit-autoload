@@ -30,4 +30,18 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue(Loader::autoload('Acme'));
   }
 
+  /**
+   * Tests that Loader::autoload() works properly.
+   *
+   * @covers ::autoload()
+   * @covers ::autoloadPaths()
+   */
+  public function test_autoload_unexisting() {
+    Loader::setClassMap([
+      '\\Acme' => './data/acme.inc'
+    ]);
+    Loader::setSeed(__DIR__);
+    $this->assertFalse(Loader::autoload('Invalid'));
+  }
+
 }
