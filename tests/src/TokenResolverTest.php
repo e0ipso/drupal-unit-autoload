@@ -36,6 +36,10 @@ class TokenResolverTest extends \PHPUnit_Framework_TestCase {
    * @dataProvider resolveProvider
    *
    * @covers ::resolve()
+   * @covers ::cleanToken()
+   * @covers ::getToken()
+   * @covers ::getClassName()
+   * @covers ::parseArguments()
    */
   public function test_resolve($path, $expected) {
     $resolver = new TokenResolver($path);
@@ -61,12 +65,30 @@ class TokenResolverTest extends \PHPUnit_Framework_TestCase {
    * Tests that ::resolve() is working.
    *
    * @covers ::resolve()
+   * @covers ::cleanToken()
+   * @covers ::getToken()
+   * @covers ::getClassName()
+   * @covers ::parseArguments()
    */
   public function test_resolve_unexisting() {
     // 4. Unexisting path without a real token.
     $resolver = new TokenResolver('Lorem');
     $finder = $resolver->resolve();
     $this->assertNull($finder);
+  }
+
+  /**
+   * Tests that the ::cleanToken is working.
+   *
+   * @expectedException \Drupal\Composer\ClassLoader\ClassLoaderException
+   *
+   * @covers ::cleanToken()
+   */
+  public function test_cleanToken() {
+    $resolver = new TokenResolver('');
+    $reflection_method = new \ReflectionMethod(get_class($resolver), 'cleanToken');
+    $reflection_method->setAccessible(TRUE);
+    $reflection_method->invoke($resolver);
   }
 
 }
