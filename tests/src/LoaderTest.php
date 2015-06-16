@@ -58,4 +58,29 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse(Loader::autoload('Acme'));
   }
 
+  /**
+   * Tests that Loader::setClassMap works properly.
+   *
+   * @dataProvider setClassMapProvider
+   *
+   * @covers ::setClassMap()
+   */
+  public function test_setClassMap() {
+    Loader::setClassMap(['\\Foo' => 'bar']);
+    $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'classMap');
+    $reflection_property->setAccessible(TRUE);
+    $value = $reflection_property->getValue();
+    $this->assertEquals(['Foo' => 'bar'], $value);
+  }
+
+  /**
+   * Provider for test_setClassMap.
+   */
+  public static function setClassMapProvider() {
+    return [
+      [['\\Foo' => 'bar'], ['Foo' => 'bar']],
+      [['Foo' => 'bar'], ['Foo' => 'bar']],
+    ];
+  }
+
 }
