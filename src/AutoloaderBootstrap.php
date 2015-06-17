@@ -47,10 +47,10 @@ class AutoloaderBootstrap {
    *   The Composer class loader.
    * @param string $seed
    *   The seed to find the drupal projects.
-   * @param Loader $loader
+   * @param LoaderInterface $loader
    *   The loader object to use. NULL to auto-create one.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $classLoader, $seed = 'composer.json', Loader $loader = NULL) {
+  public function __construct(\Composer\Autoload\ClassLoader $classLoader, $seed = 'composer.json', LoaderInterface $loader = NULL) {
     $this->classLoader = $classLoader;
     $this->seed = $seed;
     $this->loader = $loader ?: new Loader($seed);

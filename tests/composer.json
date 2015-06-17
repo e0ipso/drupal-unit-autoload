@@ -14,6 +14,8 @@
     "drupal-path": {
       "\\Tmp": "DRUPAL_ROOT/file.inc",
       "\\Tmp2": "data/acme.inc"
-    }
+    },
+    "psr-4": "DRUPAL_ROOT/file.inc",
+    "psr-0": "DRUPAL_ROOT/file.inc"
   }
 }
