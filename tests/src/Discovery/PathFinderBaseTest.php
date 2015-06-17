@@ -7,11 +7,13 @@
 
 namespace Drupal\Composer\ClassLoader\Discovery\Tests;
 
-use Drupal\Composer\ClassLoader\Discovery\PathFinderBase;
+use Drupal\Composer\ClassLoader\Discovery\PathFinderNull;
 
 /**
- * Class PathFinderBase
+ * Class PathFinderBaseTest
+ *
  * @coversDefaultClass \Drupal\Composer\ClassLoader\Discovery\PathFinderBase
+ *
  * @package Drupal\Composer\ClassLoader\Discovery\Tests
  */
 class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
@@ -21,9 +23,8 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
    *
    * @covers ::__construct()
    */
-
   public function testConstructor() {
-    $pathFinder = new FakePathFinder(['./testFolder/']);
+    $pathFinder = new PathFinderNull(['./testFolder/']);
     $property = new \ReflectionProperty($pathFinder, 'path');
     $property->setAccessible(true);
     $value = $property->getValue($pathFinder);
@@ -36,8 +37,8 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
    * @covers ::requireFile()
    */
   public function testRequireFile() {
-    $pathFinder = new FakePathFinder(['']);
-    $pathFinder->requireFile(realpath('data/acme.inc'));
+    $pathFinder = new PathFinderNull(['data/acme.inc']);
+    $pathFinder->requireFile('data/acme.inc');
     $included = get_included_files();
     $this->assertTrue(in_array(realpath('data/acme.inc'), $included));
   }
@@ -49,7 +50,7 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
    * @covers ::cleanDirPath()
    */
   public function testCleanDirPath($given, $expected) {
-    $pathFinder = new FakePathFinder(['']);
+    $pathFinder = new PathFinderNull(['']);
 
     $class = new \ReflectionClass('\Drupal\Composer\ClassLoader\Discovery\PathFinderBase');
     $method = $class->getMethod('cleanDirPath');
@@ -68,14 +69,6 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
       array('testFolder/.', 'testFolder'),
       array('deep/testFolder/.', 'deep/testFolder'),
     );
-  }
-
-}
-
-class FakePathFinder extends PathFinderBase {
-
-  public function find($seed) {
-    return realpath($seed);
   }
 
 }
