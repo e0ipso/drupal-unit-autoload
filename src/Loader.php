@@ -41,13 +41,23 @@ class Loader implements LoaderInterface {
   protected $seed;
 
   /**
+   * The token resolver instance.
+   *
+   * @var TokenResolverFactoryInterface
+   */
+  protected $tokenResolverFactory;
+
+  /**
    * Constructs a Loader object.
    *
    * @param string $seed.
    *   This is the path of the composer.json file that triggered the bootstrap.
+   * @param TokenResolverFactoryInterface $token_resolver_factory
+   *   Factory object to create token resolvers.
    */
-  public function __construct($seed) {
+  public function __construct($seed, TokenResolverFactoryInterface $token_resolver_factory = NULL) {
     $this->seed = $seed;
+    $this->tokenResolverFactory = $token_resolver_factory ?: new TokenResolverFactory();
   }
 
   /**
@@ -124,7 +134,7 @@ class Loader implements LoaderInterface {
       return FALSE;
     }
     try {
-      $resolver = new TokenResolver($this->classMap[$class]);
+      $resolver = $this->tokenResolverFactory->factory($this->classMap[$class]);
       $finder = $resolver->resolve();
       // Have the path finder require the file and return TRUE or FALSE if it
       // found the file or not.
@@ -167,7 +177,7 @@ class Loader implements LoaderInterface {
         foreach ($tokenized_paths as $tokenized_path) {
           try {
             // Find the real path for the tokenized one.
-            $resolver = new TokenResolver($tokenized_path);
+            $resolver = $this->tokenResolverFactory->factory($tokenized_path);
             $finder = $resolver->resolve();
             // Get the real path of the prefix.
             $real_path = $finder->find($this->seed);

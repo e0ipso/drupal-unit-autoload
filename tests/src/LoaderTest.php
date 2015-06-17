@@ -24,7 +24,25 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::unprefixClass()
    */
   public function test_autoload() {
-    $loader = new Loader(__DIR__);
+    // Mock a finder object.
+    $finder = m::mock('\Drupal\Composer\ClassLoader\PathFinderInterface');
+    $finder
+      ->shouldReceive('requireFile')
+      ->once();
+    // Mock a resolver object.
+    $resolver = m::mock('\Drupal\Composer\ClassLoader\TokenResolverInterface');
+    $resolver
+      ->shouldReceive('resolve')
+      ->once()
+      ->andReturn($finder);
+    // Mock a resolver factory object.
+    $resolver_factory = m::mock('\Drupal\Composer\ClassLoader\TokenResolverFactoryInterface');
+    $resolver_factory
+      ->shouldReceive('factory')
+      ->once()
+      ->andReturn($resolver);
+
+    $loader = new Loader(__DIR__, $resolver_factory);
     $loader->setClassMap([
       '\\Acme' => './data/acme.inc',
     ]);

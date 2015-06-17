@@ -20,15 +20,25 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
   protected $moduleName;
 
   /**
+   * The core finder.
+   *
+   * @var PathFinderInterface
+   */
+  protected $coreFinder;
+
+  /**
    * Constructs a PathFinderContrib object.
    *
    * @param string[] $options
    *   Constructor options. It contains, at least the relative path in the first
    *   position and the module name in the second.
+   * @param PathFinderCore $core_finder
+   *   The path finder to find the core installation.
    */
-  public function __construct(array $options) {
+  public function __construct(array $options, PathFinderInterface $core_finder = NULL) {
     $this->path = $options[0];
     $this->moduleName = $options[1];
+    $this->coreFinder = $core_finder ?: new PathFinderCore(array(''));
   }
 
   /**
@@ -38,8 +48,7 @@ class PathFinderContrib extends PathFinderBase implements PathFinderInterface {
     // To find contrib, we need to know where core is first. Pass the empty
     // string to as the path so we get the path for core itself -and not a path
     // relative to the core install-.
-    $core_finder = new PathFinderCore(array(''));
-    $core_path = $core_finder->find($seed);
+    $core_path = $this->coreFinder->find($seed);
 
     // Create the RecursiveDirectoryIterator on the core directory.
     $core_directory = new \RecursiveDirectoryIterator($core_path . '/sites', \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::SKIP_DOTS);
