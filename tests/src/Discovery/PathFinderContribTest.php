@@ -70,7 +70,7 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    * @covers ::find()
    */
   public function test_find__noContrib() {
-    // 3. Test seed not in Drupal root.
+    // 3. Test seed not in Drupal contrib.
     $pathFinder = new PathFinderContrib(['', 'testmodule2']);
     $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
   }

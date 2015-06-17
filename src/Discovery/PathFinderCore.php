@@ -33,9 +33,11 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       }
     }
     while ($directory = $this->getParentDirectory($directory));
+    // @codeCoverageIgnoreStart
     // If we have not returned, that means that the Drupal core directory could
     // not be found.
     throw new ClassLoaderException(sprintf('Drupal core directory could not be found as a parent of: %s.', $seed));
+    // @codeCoverageIgnoreEnd
   }
 
   /**
@@ -86,8 +88,10 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
       try {
         return new \DirectoryIterator($path_info['dirname']);
       }
+      // @codeCoverageIgnoreStart
       catch (\UnexpectedValueException $e) {}
     }
+    // @codeCoverageIgnoreEnd
     throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $path_name));
   }
 
