@@ -24,7 +24,7 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
   public function test___construct() {
     $loader = m::mock('\Composer\Autoload\ClassLoader');
     $autoloader = new AutoloaderBootstrap($loader);
-    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'loader');
+    $reflection_property = new \ReflectionProperty(get_class($autoloader), 'classLoader');
     $reflection_property->setAccessible(TRUE);
     $value = $reflection_property->getValue($autoloader);
     $this->assertEquals($loader, $value);
@@ -47,10 +47,10 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $autoloader->register();
 
-    $this->assertTrue($autoloader::checkLoadedAutoloader());
+    $this->assertTrue($autoloader->checkLoadedAutoloader());
     // Make sure that calling to register a second time does not fail.
     $autoloader->register();
-    $this->assertTrue($autoloader::checkLoadedAutoloader());
+    $this->assertTrue($autoloader->checkLoadedAutoloader());
   }
 
 

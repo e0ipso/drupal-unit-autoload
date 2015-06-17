@@ -24,11 +24,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::unprefixClass()
    */
   public function test_autoload() {
-    Loader::setClassMap([
+    $loader = new Loader(__DIR__);
+    $loader->setClassMap([
       '\\Acme' => './data/acme.inc',
     ]);
-    Loader::setSeed(__DIR__);
-    $this->assertTrue(Loader::autoload('Acme'));
+    $this->assertTrue($loader->autoload('Acme'));
   }
 
   /**
@@ -38,11 +38,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::autoloadPaths()
    */
   public function test_autoload_unexisting() {
-    Loader::setClassMap([
+    $loader = new Loader(__DIR__);
+    $loader->setClassMap([
       '\\Acme' => './data/acme.inc',
     ]);
-    Loader::setSeed(__DIR__);
-    $this->assertFalse(Loader::autoload('Invalid'));
+    $this->assertFalse($loader->autoload('Invalid'));
   }
 
   /**
@@ -52,11 +52,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::autoloadPaths()
    */
   public function test_autoload_finderException() {
-    Loader::setClassMap([
+    $loader = new Loader(__DIR__);
+    $loader->setClassMap([
       '\\Acme' => 'DRUPAL_ROOT/file.inc',
     ]);
-    Loader::setSeed(__DIR__);
-    $this->assertFalse(Loader::autoload('Acme'));
+    $this->assertFalse($loader->autoload('Acme'));
   }
 
   /**
@@ -67,10 +67,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::setClassMap()
    */
   public function test_setClassMap($given, $expected) {
-    Loader::setClassMap($given);
+    $loader = new Loader(__DIR__);
+    $loader->setClassMap($given);
     $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'classMap');
     $reflection_property->setAccessible(TRUE);
-    $value = $reflection_property->getValue();
+    $value = $reflection_property->getValue($loader);
     $this->assertEquals($expected, $value);
   }
 
@@ -92,10 +93,11 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::setPsrClassMap()
    */
   public function test_setPsrClassMap($given, $expected) {
-    Loader::setPsrClassMap($given);
+    $loader = new Loader(__DIR__);
+    $loader->setPsrClassMap($given);
     $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'psrClassMap');
     $reflection_property->setAccessible(TRUE);
-    $value = $reflection_property->getValue();
+    $value = $reflection_property->getValue($loader);
     $this->assertEquals($expected, $value);
   }
 
@@ -121,11 +123,12 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::setSeed()
    */
   public function test_setSeed() {
-    $seed = 'Lorem ipsum';
-    Loader::setSeed($seed);
+    $loader = new Loader('Lorem ipsum');
+    $seed = 'Dolor sit';
+    $loader->setSeed($seed);
     $reflection_property = new \ReflectionProperty('\Drupal\Composer\ClassLoader\Loader', 'seed');
     $reflection_property->setAccessible(TRUE);
-    $value = $reflection_property->getValue();
+    $value = $reflection_property->getValue($loader);
     $this->assertEquals($seed, $value);
   }
 
@@ -135,12 +138,13 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
    * @covers ::registerPsr()
    */
   public function test_registerPsr() {
+    $loader = new Loader('data/docroot/sites/all/modules/testmodule/composer.json');
     // Mock the \Composer\Autoload\ClassLoader loader.
-    $loader = m::mock('\Composer\Autoload\ClassLoader');
-    $loader
+    $classLoader = m::mock('\Composer\Autoload\ClassLoader');
+    $classLoader
       ->shouldReceive('add')
       ->twice();
-    $loader
+    $classLoader
       ->shouldReceive('addPsr4')
       ->once();
 
@@ -155,9 +159,8 @@ class LoaderTest extends \PHPUnit_Framework_TestCase {
         'Drupal\\Kitten\\' => 'DRUPAL_ROOT/file.inc',
       ],
     ];
-    Loader::setPsrClassMap($psrClassMap);
-    Loader::setSeed('data/docroot/sites/all/modules/testmodule/composer.json');
-    Loader::registerPsr($loader);
+    $loader->setPsrClassMap($psrClassMap);
+    $loader->registerPsr($classLoader);
   }
 
 }

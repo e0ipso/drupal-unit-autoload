@@ -17,7 +17,7 @@ class Loader implements LoaderInterface {
    *
    * @var array
    */
-  protected static $classMap;
+  protected $classMap;
 
   /**
    * PSR Class maps.
@@ -29,7 +29,7 @@ class Loader implements LoaderInterface {
    *
    * @var array
    */
-  protected static $psrClassMap;
+  protected $psrClassMap;
 
   /**
    * Seed.
@@ -38,31 +38,41 @@ class Loader implements LoaderInterface {
    *
    * @var
    */
-  protected static $seed;
+  protected $seed;
 
   /**
-   * {@inheritdoc}
+   * Constructs a Loader object.
+   *
+   * @param string $seed.
+   *   This is the path of the composer.json file that triggered the bootstrap.
    */
-  public static function autoload($class) {
-    return static::autoloadPaths($class);
+  public function __construct($seed) {
+    $this->seed = $seed;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function setClassMap(array $class_map) {
+  public function autoload($class) {
+    return $this->autoloadPaths($class);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setClassMap(array $class_map) {
     // Remove the leading \ from the class names.
     $unprefixed_class_map = array();
     foreach ($class_map as $class_name => $tokenized_path) {
       $unprefixed_class_map[static::unprefixClass($class_name)] = $tokenized_path;
     }
-    static::$classMap = $unprefixed_class_map;
+    $this->classMap = $unprefixed_class_map;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function setPsrClassMap(array $class_map) {
+  public function setPsrClassMap(array $class_map) {
     // Remove the leading \ from the partial namespaces.
     $unprefixed_class_map = array();
     foreach ($class_map as $psr => $psr_class_map) {
@@ -71,14 +81,14 @@ class Loader implements LoaderInterface {
         $unprefixed_class_map[$psr][static::unprefixClass($class_name)] = $tokenized_path;
       }
     }
-    static::$psrClassMap = $unprefixed_class_map;
+    $this->psrClassMap = $unprefixed_class_map;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function setSeed($seed) {
-    static::$seed = $seed;
+  public function setSeed($seed) {
+    $this->seed = $seed;
   }
 
   /**
@@ -106,19 +116,19 @@ class Loader implements LoaderInterface {
    * @return bool
    *   TRUE if the class was found. FALSE otherwise.
    */
-  protected static function autoloadPaths($class) {
+  protected function autoloadPaths($class) {
     $class = static::unprefixClass($class);
     // If the class that PHP is trying to find is not in the class map, built
     // from the composer configuration, then bail.
-    if (!in_array($class, array_keys(static::$classMap))) {
+    if (!in_array($class, array_keys($this->classMap))) {
       return FALSE;
     }
     try {
-      $resolver = new TokenResolver(static::$classMap[$class]);
+      $resolver = new TokenResolver($this->classMap[$class]);
       $finder = $resolver->resolve();
       // Have the path finder require the file and return TRUE or FALSE if it
       // found the file or not.
-      $finder->requireFile(static::$seed);
+      $finder->requireFile($this->seed);
       return TRUE;
     }
     catch (ClassLoaderException $e) {
@@ -130,7 +140,7 @@ class Loader implements LoaderInterface {
   /**
    * {@inheritdoc}
    */
-  public static function registerPsr(\Composer\Autoload\ClassLoader $loader) {
+  public function registerPsr(\Composer\Autoload\ClassLoader $loader) {
     // Composer's autoloader uses a different method to add each PSR partial
     // namespace.
     $psrs = array(
@@ -148,7 +158,7 @@ class Loader implements LoaderInterface {
       //      [ 'Drupal\\plug\\' => ['DRUPAL_CONTRIB<plug>/lib', …] ],
       //    ],
       //  ]
-      foreach (static::$psrClassMap[$psr] as $partial_namespace => $tokenized_paths) {
+      foreach ($this->psrClassMap[$psr] as $partial_namespace => $tokenized_paths) {
         if (!is_array($tokenized_paths)) {
           // If a string was passed, then convert it to an array for
           // consistency.
@@ -160,7 +170,7 @@ class Loader implements LoaderInterface {
             $resolver = new TokenResolver($tokenized_path);
             $finder = $resolver->resolve();
             // Get the real path of the prefix.
-            $real_path = $finder->find(static::$seed);
+            $real_path = $finder->find($this->seed);
             $loader->{$loader_method}($partial_namespace, $real_path);
           }
           catch (ClassLoaderException $e) {}
