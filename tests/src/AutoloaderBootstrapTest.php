@@ -37,16 +37,21 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
   /**
    * Tests the ::register() method.
    *
+   * @covers ::register()
    * @covers ::load()
    * @covers ::registerDrupalPaths()
+   * @covers ::checkLoadedAutoloader()
    */
   public function test_register() {
     $loader = m::mock('\Composer\Autoload\ClassLoader');
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $autoloader->register();
-    $functions = spl_autoload_functions();
-    $expected = [['Drupal\Composer\ClassLoader\Loader', 'autoload']];
-    $this->assertTrue(in_array($expected, $functions));
+
+    $this->assertTrue($autoloader::checkLoadedAutoloader());
+    // Make sure that calling to register a second time does not fail.
+    $autoloader->register();
+    $this->assertTrue($autoloader::checkLoadedAutoloader());
   }
+
 
 }
