@@ -40,10 +40,16 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
    * @covers ::register()
    * @covers ::load()
    * @covers ::registerDrupalPaths()
-   * @covers ::checkLoadedAutoloader()
+   * @covers ::registerPsr()
    */
   public function test_register() {
     $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $loader
+      ->shouldReceive('add')
+      ->once();
+    $loader
+      ->shouldReceive('addPsr4')
+      ->once();
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $autoloader->register();
 
