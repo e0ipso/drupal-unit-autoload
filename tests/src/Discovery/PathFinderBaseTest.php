@@ -60,8 +60,10 @@ class PathFinderBaseTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, $output);
   }
 
-  public function cleanDirPathProvider()
-  {
+  /**
+   * Provider for testCleanDirPath.
+   */
+  public static function cleanDirPathProvider() {
     return array(
       array('./testFolder/.', './testFolder'),
       array('./testFolder', './testFolder'),
