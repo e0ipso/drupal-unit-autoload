@@ -4,7 +4,7 @@
 
 # Drupal Unit Autoload
 
-Have you ever wanted to add **PHPUnit*t* tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
+Have you ever wanted to add **PHPUnit** tests to your Drupal 7 module? Well, you should. This tool aims to help you to deal
 with autoloading the classes that you have in your Drupal installation.
 
 ## The Problem
