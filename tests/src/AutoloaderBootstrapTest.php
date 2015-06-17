@@ -59,5 +59,72 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($autoloader->checkLoadedAutoloader());
   }
 
+  /**
+   * Tests the ::checkLoadedAutoloader() method.
+   */
+  public function test_checkLoadedAutoloader() {
+    $class_loader = m::mock('\Composer\Autoload\ClassLoader');
+    $loader = m::mock('\Drupal\Composer\ClassLoader\LoaderInterface');
+    $loader
+      ->shouldReceive(AutoloaderBootstrap::AUTOLOAD_METHOD);
+    $autoloader = new AutoloaderBootstrap($class_loader, 'data/docroot/sites/all/modules/testmodule/composer.json', $loader);
+    $this->assertFalse($autoloader->checkLoadedAutoloader());
+    spl_autoload_register(array($loader, AutoloaderBootstrap::AUTOLOAD_METHOD));
+    $this->assertTrue($autoloader->checkLoadedAutoloader());
+  }
+
+  /**
+   * Tests the protected ::unload() method.
+   *
+   * @covers ::unload()
+   */
+  public function test_unload() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+
+    // First load it.
+    $reflection_method = new \ReflectionMethod(get_class($autoloader), 'load');
+    $reflection_method->setAccessible(TRUE);
+    $reflection_method->invoke($autoloader);
+
+    // Make sure it's added
+    $this->assertTrue($autoloader->checkLoadedAutoloader());
+
+    // Then unload it.
+    $reflection_method = new \ReflectionMethod(get_class($autoloader), 'unload');
+    $reflection_method->setAccessible(TRUE);
+    $reflection_method->invoke($autoloader);
+
+    // Make sure it's not added
+    $this->assertFalse($autoloader->checkLoadedAutoloader());
+  }
+
+  /**
+   * Tests the ::registerDrupalPaths() method.
+   *
+   * @covers ::registerDrupalPaths()
+   */
+  public function test_registerDrupalPaths_empty() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $reflection_method = new \ReflectionMethod(get_class($autoloader), 'registerDrupalPaths');
+    $reflection_method->setAccessible(TRUE);
+    $value = $reflection_method->invokeArgs($autoloader, [new \stdClass()]);
+    $this->assertNull($value);
+  }
+
+  /**
+   * Tests the ::registerPsr() method.
+   *
+   * @covers ::registerPsr()
+   */
+  public function test_registerPsr_empty() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $reflection_method = new \ReflectionMethod(get_class($autoloader), 'registerPsr');
+    $reflection_method->setAccessible(TRUE);
+    $value = $reflection_method->invokeArgs($autoloader, [new \stdClass()]);
+    $this->assertNull($value);
+  }
 
 }
