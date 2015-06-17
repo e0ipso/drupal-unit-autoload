@@ -20,27 +20,42 @@ class AutoloaderBootstrap {
   const COMPOSER_CONFIGURATION_NAME = 'composer.json';
 
   /**
+   * Holds the composer autoloader.
+   *
+   * @var \Composer\Autoload\ClassLoader
+   */
+  protected $loader;
+
+  /**
+   * Holds the seed.
+   *
+   * @var string
+   */
+  protected $seed;
+
+  /**
    * Constructs a AutoloaderBootstrap object.
    *
    * @param \Composer\Autoload\ClassLoader $loader
    *   The Composer class loader.
+   * @param string $seed
+   *   The seed to find the drupal projects.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $loader) {
+  public function __construct(\Composer\Autoload\ClassLoader $loader, $seed = 'composer.json') {
     $this->loader = $loader;
+    $this->seed = $seed;
   }
 
   /**
    * Register the autoloader if it is not registered.
    */
   public function register() {
-    if ($functions = spl_autoload_functions()) {
-      if (array_search(static::AUTOLOAD_FUNCTION, $functions)) {
-        return;
-      }
+    if ($this::checkLoadedAutoloader()) {
+      return;
     }
     // Parse the composer.json.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
-    Loader::setSeed('composer.json');
+    Loader::setSeed($this->seed);
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
   }
@@ -95,6 +110,25 @@ class AutoloaderBootstrap {
       'psr-4' => $psr4,
     ));
     Loader::registerPsr($this->loader);
+  }
+
+  /**
+   * Checks if the autoloader has been added.
+   *
+   * @return bool
+   */
+  public static function checkLoadedAutoloader() {
+    $autoloader_str = ltrim(static::AUTOLOAD_FUNCTION, '\\');
+    $autoloader = explode('::', $autoloader_str);
+    foreach (spl_autoload_functions() as $callable) {
+      if (
+        ($callable[0] == $autoloader[0] || $callable[0] == $autoloader[0]) &&
+        $callable[1] == $autoloader[1]
+      ) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }

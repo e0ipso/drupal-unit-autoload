@@ -9,5 +9,11 @@
       "Drupal\\Composer\\ClassLoader\\": "../src/",
       "Drupal\\Composer\\ClassLoader\\Tests\\": "src/"
     }
+  },
+  "class-loader": {
+    "drupal-path": {
+      "\\Tmp": "DRUPAL_ROOT/file.inc",
+      "\\Tmp2": "data/acme.inc"
+    }
   }
 }
