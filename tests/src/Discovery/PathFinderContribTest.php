@@ -35,6 +35,12 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
     $property->setAccessible(true);
     $value = $property->getValue($pathFinder);
     $this->assertEquals('mymodule', $value);
+
+    // Assert path finder is set.
+    $property = new \ReflectionProperty($pathFinder, 'coreFinder');
+    $property->setAccessible(true);
+    $value = $property->getValue($pathFinder);
+    $this->assertInstanceOf('\Drupal\Composer\ClassLoader\Discovery\PathFinderInterface', $value);
   }
 
   /**
