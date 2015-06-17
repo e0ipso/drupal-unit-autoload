@@ -19,28 +19,28 @@ interface LoaderInterface {
    * @return bool
    *   TRUE if the class is currently available, FALSE otherwise.
    */
-  public static function autoload($class);
+  public function autoload($class);
 
   /**
    * Sets the class map.
    *
    * @param array $class_map
    */
-  public static function setClassMap(array $class_map);
+  public function setClassMap(array $class_map);
 
   /**
    * Sets the PSR class map.
    *
    * @param array[] $class_map
    */
-  public static function setPsrClassMap(array $class_map);
+  public function setPsrClassMap(array $class_map);
 
   /**
    * Sets the seed path.
    *
    * @param string $seed.
    */
-  public static function setSeed($seed);
+  public function setSeed($seed);
 
   /**
    * Helper function to register PSR-0 and PSR-4 based files.
@@ -51,6 +51,6 @@ interface LoaderInterface {
    * @return bool
    *   TRUE if the class was found. FALSE otherwise.
    */
-  public static function registerPsr(\Composer\Autoload\ClassLoader $loader);
+  public function registerPsr(\Composer\Autoload\ClassLoader $loader);
 
 }

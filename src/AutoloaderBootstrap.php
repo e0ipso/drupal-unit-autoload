@@ -16,13 +16,20 @@ namespace Drupal\Composer\ClassLoader;
  */
 class AutoloaderBootstrap {
 
-  const AUTOLOAD_FUNCTION = '\Drupal\Composer\ClassLoader\Loader::autoload';
+  const AUTOLOAD_METHOD = 'autoload';
   const COMPOSER_CONFIGURATION_NAME = 'composer.json';
 
   /**
    * Holds the composer autoloader.
    *
    * @var \Composer\Autoload\ClassLoader
+   */
+  protected $classLoader;
+
+  /**
+   * Holds the class loader.
+   *
+   * @var \Drupal\Composer\ClassLoader\Loader
    */
   protected $loader;
 
@@ -36,26 +43,28 @@ class AutoloaderBootstrap {
   /**
    * Constructs a AutoloaderBootstrap object.
    *
-   * @param \Composer\Autoload\ClassLoader $loader
+   * @param \Composer\Autoload\ClassLoader $classLoader
    *   The Composer class loader.
    * @param string $seed
    *   The seed to find the drupal projects.
+   * @param Loader $loader
+   *   The loader object to use. NULL to auto-create one.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $loader, $seed = 'composer.json') {
-    $this->loader = $loader;
+  public function __construct(\Composer\Autoload\ClassLoader $classLoader, $seed = 'composer.json', Loader $loader = NULL) {
+    $this->classLoader = $classLoader;
     $this->seed = $seed;
+    $this->loader = $loader ?: new Loader($seed);
   }
 
   /**
    * Register the autoloader if it is not registered.
    */
   public function register() {
-    if ($this::checkLoadedAutoloader()) {
+    if ($this->checkLoadedAutoloader()) {
       return;
     }
     // Parse the composer.json.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
-    Loader::setSeed($this->seed);
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
   }
@@ -63,15 +72,15 @@ class AutoloaderBootstrap {
   /**
    * Registers the autoloader.
    */
-  protected static function load() {
-    spl_autoload_register(static::AUTOLOAD_FUNCTION);
+  protected function load() {
+    spl_autoload_register(array($this->loader, static::AUTOLOAD_METHOD));
   }
 
   /**
    * Unregisters the autoloader.
    */
-  protected static function unload() {
-    spl_autoload_unregister(static::AUTOLOAD_FUNCTION);
+  protected function unload() {
+    spl_autoload_unregister(array($this->loader, static::AUTOLOAD_METHOD));
   }
 
   /**
@@ -84,8 +93,8 @@ class AutoloaderBootstrap {
     if (empty($composer_config->{'class-loader'}->{'drupal-path'})) {
       return;
     }
-    Loader::setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
-    $this::load();
+    $this->loader->setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
+    $this->load();
   }
 
   /**
@@ -105,11 +114,11 @@ class AutoloaderBootstrap {
     if (empty($psr4) && empty($psr0)) {
       return;
     }
-    Loader::setPsrClassMap(array(
+    $this->loader->setPsrClassMap(array(
       'psr-0' => $psr0,
       'psr-4' => $psr4,
     ));
-    Loader::registerPsr($this->loader);
+    $this->loader->registerPsr($this->classLoader);
   }
 
   /**
@@ -117,18 +126,9 @@ class AutoloaderBootstrap {
    *
    * @return bool
    */
-  public static function checkLoadedAutoloader() {
-    $autoloader_str = ltrim(static::AUTOLOAD_FUNCTION, '\\');
-    $autoloader = explode('::', $autoloader_str);
-    foreach (spl_autoload_functions() as $callable) {
-      if (
-        ($callable[0] == $autoloader[0] || $callable[0] == $autoloader[0]) &&
-        $callable[1] == $autoloader[1]
-      ) {
-        return TRUE;
-      }
-    }
-    return FALSE;
+  public function checkLoadedAutoloader() {
+    $functions = spl_autoload_functions();
+    return in_array(array($this->loader, static::AUTOLOAD_METHOD), $functions);
   }
 
 }
