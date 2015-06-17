@@ -41,8 +41,8 @@ class PathFinderCoreTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_getParentDirectory__noParent() {
     // 2. Test seed not in Drupal root.
-    $pathFinder = new PathFinderCore(['/file.inc']);
-    $pathFinder->find('data/acme.inc');
+    $pathFinder = new PathFinderCore(['data/acme.inc']);
+    $pathFinder->find('file.inc');
   }
 
 }

@@ -19,7 +19,12 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     // Try to create the iterator with the seed.
     $directory = NULL;
     $seed = is_dir($seed) ? $seed : dirname($seed);
-    $directory = new \DirectoryIterator($seed);
+    try {
+      $directory = new \DirectoryIterator($seed);
+    }
+    catch (\RuntimeException $e) {
+      throw new ClassLoaderException($e);
+    }
 
     // Starting at the directory containing the seed path, we go one directory
     // up and up and up until we reach the Drupal root.

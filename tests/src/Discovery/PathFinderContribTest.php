@@ -64,8 +64,8 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_find__noDrupal() {
     // 2. Test seed not in Drupal root.
-    $pathFinder = new PathFinderContrib(['', 'testmodule']);
-    $pathFinder->find('data/acme.inc');
+    $pathFinder = new PathFinderContrib(['data/acme.inc', 'testmodule']);
+    $pathFinder->find(__DIR__);
   }
 
   /**
@@ -77,8 +77,8 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_find__noContrib() {
     // 3. Test seed not in Drupal contrib.
-    $pathFinder = new PathFinderContrib(['', 'testmodule2']);
-    $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
+    $pathFinder = new PathFinderContrib(['data/docroot/sites/all/modules/testmodule/composer.json', 'testmodule2']);
+    $pathFinder->find(__DIR__);
   }
 
   /**
