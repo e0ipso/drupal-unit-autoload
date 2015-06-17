@@ -18,17 +18,14 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     $seed = realpath($seed);
     // Try to create the iterator with the seed.
     $directory = NULL;
-    if (is_dir($seed)) {
-      $directory = new \DirectoryIterator($seed);
-    }
-    else {
-      $directory = new \DirectoryIterator(dirname($seed));
-    }
+    $seed = is_dir($seed) ? $seed : dirname($seed);
+    $directory = new \DirectoryIterator($seed);
+
     // Starting at the directory containing the seed path, we go one directory
     // up and up and up until we reach the Drupal root.
     do {
       if ($this->isDrupalRoot($directory)) {
-        return dirname($this->cleanDirPath($directory->getPathName())) . $this->path;
+        return $this->cleanDirPath($directory->getPathName()) . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));
@@ -53,14 +50,13 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
     // operator.
     $d = clone $directory;
     // Check if there is a COPYRIGHT.txt file in the directory.
-    $copyrightPath = $d->getPath() . DIRECTORY_SEPARATOR . 'COPYRIGHT.txt';
-    $check = file_exists($copyrightPath);
-    if ($check) {
-      // Make sure that the COPYRIGHT.txt file corresponds to Drupal.
-      $line = fgets(fopen($copyrightPath, 'r'));
-      $check = (strpos($line, 'All Drupal code is Copyright') === 0);
+    $copyrightPath = $d->getPathname() . DIRECTORY_SEPARATOR . 'COPYRIGHT.txt';
+    if (!$check = file_exists($copyrightPath)) {
+      return FALSE;
     }
-    return $check;
+    // Make sure that the COPYRIGHT.txt file corresponds to Drupal.
+    $line = fgets(fopen($copyrightPath, 'r'));
+    return strpos($line, 'All Drupal code is Copyright') === 0;
   }
 
   /**
