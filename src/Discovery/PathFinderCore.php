@@ -16,21 +16,13 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    */
   public function find($seed) {
     $seed = realpath($seed);
-    // Try to create the iterator with the seed.
-    $directory = NULL;
-    $seed = is_dir($seed) ? $seed : dirname($seed);
-    try {
-      $directory = new \DirectoryIterator($seed);
-    }
-    catch (\RuntimeException $e) {
-      throw new ClassLoaderException($e);
-    }
+    $directory = is_dir($seed) ? $seed : dirname($seed);
 
     // Starting at the directory containing the seed path, we go one directory
     // up and up and up until we reach the Drupal root.
     do {
       if ($this->isDrupalRoot($directory)) {
-        return $this->cleanDirPath($directory->getPathName()) . $this->path;
+        return $directory . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));
@@ -44,18 +36,15 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
   /**
    * Checks if the passed directory is the Drupal root.
    *
-   * @param \DirectoryIterator $directory
-   *   The directory iterator item.
+   * @param string $directory
+   *   The directory path.
    *
    * @return bool
    *   TRUE if the passed directory is the Drupal root.
    */
-  protected function isDrupalRoot(\DirectoryIterator $directory) {
-    // We need to clone the $directory object to avoid modifying its internal
-    // operator.
-    $d = clone $directory;
+  protected function isDrupalRoot($directory) {
     // Check if there is a COPYRIGHT.txt file in the directory.
-    $copyrightPath = $d->getPathname() . DIRECTORY_SEPARATOR . 'COPYRIGHT.txt';
+    $copyrightPath = $directory . DIRECTORY_SEPARATOR . 'COPYRIGHT.txt';
     if (!$check = file_exists($copyrightPath)) {
       return FALSE;
     }
@@ -67,30 +56,21 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
   /**
    * Gets the parent directory iterator.
    *
-   * @param \DirectoryIterator $directory
-   *   The current directory iterator.
+   * @param string $directory
+   *   The current directory path.
    *
    * @throws ClassLoaderException
    *   If no parent directory could be found.
    *
-   * @return \DirectoryIterator
+   * @return string
    *   The parent directory.
    */
-  protected function getParentDirectory(\DirectoryIterator $directory) {
-    // Get the path name of the directory.
-    $path_name = dirname($directory->getPathname());
-
-    // Get the parent directory and return a DirectoryIterator.
-    $path_info = pathinfo($path_name);
-    if (!empty($path_info['dirname']) && $path_info['dirname'] !== '/') {
-      try {
-        return new \DirectoryIterator($path_info['dirname']);
-      }
-      // @codeCoverageIgnoreStart
-      catch (\UnexpectedValueException $e) {}
+  protected function getParentDirectory($directory) {
+    // Get the parent directory.
+    if ($directory === realpath('/')) {
+      throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $directory));
     }
-    // @codeCoverageIgnoreEnd
-    throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $path_name));
+    return dirname($directory);
   }
 
 }

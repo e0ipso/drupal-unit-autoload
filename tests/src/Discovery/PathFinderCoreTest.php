@@ -45,4 +45,20 @@ class PathFinderCoreTest extends \PHPUnit_Framework_TestCase {
     $pathFinder->find('file.inc');
   }
 
+  /**
+   * Tests that ::find() works properly.
+   *
+   * @expectedException \Drupal\Composer\ClassLoader\ClassLoaderException
+   *
+   * @covers ::getParentDirectory()
+   */
+  public function test_getParentDirectory__root() {
+    // 3. Test seed in Drupal root throws exception.
+    $pathFinder = new PathFinderCore(['/']);
+    $class = new \ReflectionClass('\Drupal\Composer\ClassLoader\Discovery\PathFinderCore');
+    $method = $class->getMethod('getParentDirectory');
+    $method->setAccessible(true);
+    $output = $method->invokeArgs($pathFinder, ['/']);
+  }
+
 }
