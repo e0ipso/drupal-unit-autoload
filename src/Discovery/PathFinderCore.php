@@ -43,14 +43,14 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    *   TRUE if the passed directory is the Drupal root.
    */
   protected function isDrupalRoot($directory) {
-    // Check if there is a COPYRIGHT.txt file in the directory.
-    $copyrightPath = $directory . DIRECTORY_SEPARATOR . 'COPYRIGHT.txt';
-    if (!$check = file_exists($copyrightPath)) {
-      return FALSE;
+    if (!empty($directory) && is_dir($directory) && file_exists($directory . DIRECTORY_SEPARATOR . '/index.php')) {
+      // Drupal 7 root.
+      // We check for the presence of 'modules/field/field.module' to differentiate this from a D6 site
+      return (file_exists($directory . DIRECTORY_SEPARATOR . 'includes/common.inc')
+        && file_exists($directory . DIRECTORY_SEPARATOR . 'misc/drupal.js')
+        && file_exists($directory . DIRECTORY_SEPARATOR . 'modules/field/field.module'));
     }
-    // Make sure that the COPYRIGHT.txt file corresponds to Drupal.
-    $line = fgets(fopen($copyrightPath, 'r'));
-    return strpos($line, 'All Drupal code is Copyright') === 0;
+    return FALSE;
   }
 
   /**
