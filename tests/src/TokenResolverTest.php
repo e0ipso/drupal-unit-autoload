@@ -110,10 +110,36 @@ class TokenResolverTest extends \PHPUnit_Framework_TestCase {
     return [
       ['DRUPAL_ROOT/includes', TRUE],
       ['DRUPAL_CONTRIB<my_module>/src/', TRUE],
-      ['/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/', TRUE],
+      ['/lorem/ipsum/DRUPAL_ROOT/src/', TRUE],
       ['/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/', TRUE],
       ['src', FALSE],
       ['/lorem/ipsum/src', FALSE],
+    ];
+  }
+
+  /**
+   * Tests that the ::cleanToken is working.
+   *
+   * @dataProvider trimPathProvider
+   *
+   * @covers ::trimPath()
+   */
+  public function test_trimPath($path, $expected) {
+    $resolver = new TokenResolver($path);
+    $this->assertEquals($resolver->trimPath(), $expected);
+  }
+
+  /**
+   * Provider method for test_trimPath.
+   */
+  public function trimPathProvider() {
+    return [
+      ['DRUPAL_ROOT/includes', 'DRUPAL_ROOT/includes'],
+      ['DRUPAL_CONTRIB<my_module>/src/', 'DRUPAL_CONTRIB<my_module>/src/'],
+      ['/lorem/ipsum/DRUPAL_ROOT/includes/', 'DRUPAL_ROOT/includes/'],
+      ['/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/', 'DRUPAL_CONTRIB<my_module>/src/'],
+      ['src', 'src'],
+      [NULL, NULL],
     ];
   }
 
