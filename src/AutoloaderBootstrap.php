@@ -17,7 +17,6 @@ namespace Drupal\Composer\ClassLoader;
 class AutoloaderBootstrap {
 
   const AUTOLOAD_METHOD = 'autoload';
-  const COMPOSER_CONFIGURATION_NAME = 'composer.json';
 
   /**
    * Holds the composer autoloader.
@@ -32,6 +31,13 @@ class AutoloaderBootstrap {
    * @var \Drupal\Composer\ClassLoader\Loader
    */
   protected $loader;
+
+  /**
+   * Holds the token resolver factory.
+   *
+   * @var TokenResolverFactoryInterface
+   */
+  protected $tokenFactory;
 
   /**
    * Holds the seed.
@@ -49,11 +55,14 @@ class AutoloaderBootstrap {
    *   The seed to find the drupal projects.
    * @param LoaderInterface $loader
    *   The loader object to use. NULL to auto-create one.
+   * @param TokenResolverFactoryInterface $token_factory
+   *   The resolver factory.
    */
-  public function __construct(\Composer\Autoload\ClassLoader $classLoader, $seed = 'composer.json', LoaderInterface $loader = NULL) {
+  public function __construct(\Composer\Autoload\ClassLoader $classLoader, $seed = 'composer.json', LoaderInterface $loader = NULL, TokenResolverFactoryInterface $token_factory = NULL) {
     $this->classLoader = $classLoader;
     $this->seed = $seed;
     $this->loader = $loader ?: new Loader($seed);
+    $this->tokenFactory = $token_factory ?: new TokenResolverFactory();
   }
 
   /**
@@ -64,7 +73,7 @@ class AutoloaderBootstrap {
       return;
     }
     // Parse the composer.json.
-    $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
+    $composer_config = $this->getConfig();
     $this->registerDrupalPaths($composer_config);
     $this->registerPsr($composer_config);
   }
@@ -90,26 +99,26 @@ class AutoloaderBootstrap {
    *   The Composer configuration.
    */
   protected function registerDrupalPaths($composer_config) {
-    if (empty($composer_config->{'class-loader'}->{'drupal-path'})) {
+    if (empty($composer_config['drupal-path'])) {
       return;
     }
-    $this->loader->setClassMap((array) $composer_config->{'class-loader'}->{'drupal-path'});
+    $this->loader->setClassMap((array) $composer_config['drupal-path']);
     $this->load();
   }
 
   /**
    * Use Composer's autoloader to register the PRS-0 and PSR-4 paths.
    *
-   * @param object $composer_config
+   * @param array $composer_config
    *   The Composer configuration.
    */
-  protected function registerPsr($composer_config) {
+  protected function registerPsr(array $composer_config) {
     $psr0 = $psr4 = array();
-    if (!empty($composer_config->{'class-loader'}->{'psr-0'})) {
-      $psr0 = (array) $composer_config->{'class-loader'}->{'psr-0'};
+    if (!empty($composer_config['psr-0'])) {
+      $psr0 = (array) $composer_config['psr-0'];
     }
-    if (!empty($composer_config->{'class-loader'}->{'psr-4'})) {
-      $psr4 = (array) $composer_config->{'class-loader'}->{'psr-4'};
+    if (!empty($composer_config['psr-4'])) {
+      $psr4 = (array) $composer_config['psr-4'];
     }
     if (empty($psr4) && empty($psr0)) {
       return;
@@ -129,6 +138,49 @@ class AutoloaderBootstrap {
   public function checkLoadedAutoloader() {
     $functions = spl_autoload_functions();
     return in_array(array($this->loader, static::AUTOLOAD_METHOD), $functions);
+  }
+
+  /**
+   * Gets the configuration for the drupal loader from the Composer loader.
+   *
+   * @return array
+   *   The configuration array for the drupal loader.
+   */
+  public function getConfig() {
+    // Initialize empty configuration.
+    $config = array(
+      'psr-0' => array(),
+      'psr-4' => array(),
+      'drupal-path' => array(),
+    );
+
+    $psrs = array(
+      'psr-0' => $this->classLoader->getPrefixes(),
+      'psr-4' => $this->classLoader->getPrefixesPsr4(),
+    );
+    // Get all the PSR-0 and PSR-0 and detect the ones that have Drupal tokens.
+    foreach ($psrs as $psr_type => $namespaces) {
+      foreach ($namespaces as $prefix => $paths) {
+        $token_paths = array();
+        if (!is_array($paths)) {
+          $paths = array($paths);
+        }
+        foreach ($paths as $path) {
+          $token_resolver = $this->tokenFactory->factory($path);
+          if (!$token_resolver->hasToken()) {
+            continue;
+          }
+          $path = $token_resolver->trimPath();
+          $token_paths[] = $path;
+        }
+        // If there were paths, add them to the config.
+        if (!empty($token_paths)) {
+          $config[$psr_type][$prefix] = $token_paths;
+        }
+      }
+    }
+
+    return $config;
   }
 
 }

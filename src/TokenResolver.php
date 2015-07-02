@@ -62,6 +62,24 @@ class TokenResolver implements TokenResolverInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function hasToken() {
+    return (bool) $this->getToken();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function trimPath() {
+    if (!$token = $this->getToken()) {
+      return $this->path;
+    }
+    $pos = strpos($this->path, $token);
+    return substr($this->path, $pos);
+  }
+
+  /**
    * Removes the token from the tokenized path.
    *
    * @throws ClassLoaderException
@@ -90,7 +108,7 @@ class TokenResolver implements TokenResolverInterface {
     // Iterate over the supported tokens to find the token in the tokenized
     // path.
     foreach (array_keys($this->supportedTokens) as $token_name) {
-      if (strpos($this->path, $token_name) === 0) {
+      if (strpos($this->path, $token_name) !== FALSE) {
         return $token_name;
       }
     }
