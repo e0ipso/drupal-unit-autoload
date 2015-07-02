@@ -141,4 +141,44 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $this->assertNull($value);
   }
 
+  /**
+   * Tests the ::getConfig method.
+   *
+   * @covers ::getConfig()
+   */
+  public function test_getConfig() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $loader
+      ->shouldReceive('getPrefixes')
+      ->once()
+      ->andReturn([
+        '' => '/lorem/ipsum/DRUPAL_ROOT/includes',
+      ]);
+    $loader
+      ->shouldReceive('getPrefixesPsr4')
+      ->once()
+      ->andReturn([
+        'Drupal\\Composer\\ClassLoader\\' => '/lorem/ipsum/../src/',
+        'Drupal\\Composer\\ClassLoader\\Tests\\' => '/lorem/ipsum/src/',
+        'Drupal\\MyModule\\' => '/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/',
+        '' => '/lorem/ipsum/DRUPAL_ROOT/includes',
+      ]);
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $config = $autoloader->getConfig();
+    $expected = [
+      'psr-0' => [
+        '' => ['DRUPAL_ROOT/includes'],
+      ],
+      'psr-4' => [
+        'Drupal\\MyModule\\' => ['DRUPAL_CONTRIB<my_module>/src/'],
+        '' => ['DRUPAL_ROOT/includes'],
+      ],
+      'drupal-path' => [
+        '\\Tmp' => 'DRUPAL_ROOT/file.inc',
+        '\\Tmp2' => 'data/acme.inc',
+      ],
+    ];
+    $this->assertEquals($expected, $config);
+  }
+
 }

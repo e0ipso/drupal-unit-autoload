@@ -149,11 +149,11 @@ class AutoloaderBootstrap {
    */
   public function getConfig() {
     // Initialize empty configuration.
-    $config = array(
-      'psr-0' => array(),
-      'psr-4' => array(),
-      'drupal-path' => array(),
-    );
+    $config = [
+      'psr-0' => [],
+      'psr-4' => [],
+      'drupal-path' => [],
+    ];
 
     // Find the tokenized paths.
     $psrs = array(
