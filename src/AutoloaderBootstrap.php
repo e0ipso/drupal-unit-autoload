@@ -17,6 +17,7 @@ namespace Drupal\Composer\ClassLoader;
 class AutoloaderBootstrap {
 
   const AUTOLOAD_METHOD = 'autoload';
+  const COMPOSER_CONFIGURATION_NAME = 'composer.json';
 
   /**
    * Holds the composer autoloader.
@@ -154,12 +155,14 @@ class AutoloaderBootstrap {
       'drupal-path' => array(),
     );
 
+    // Find the tokenized paths.
     $psrs = array(
       'psr-0' => $this->classLoader->getPrefixes(),
       'psr-4' => $this->classLoader->getPrefixesPsr4(),
     );
     // Get all the PSR-0 and PSR-0 and detect the ones that have Drupal tokens.
     foreach ($psrs as $psr_type => $namespaces) {
+      $namespaces = $namespaces ?: [];
       foreach ($namespaces as $prefix => $paths) {
         $token_paths = array();
         if (!is_array($paths)) {
@@ -179,6 +182,11 @@ class AutoloaderBootstrap {
         }
       }
     }
+
+    // Get the drupal path configuration.
+    // TODO: Do not load the composer file.
+    $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
+    $config['drupal-path'] = (array) $composer_config->autoload->{'drupal-path'};
 
     return $config;
   }
