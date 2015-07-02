@@ -8,7 +8,7 @@
     "psr-4": {
       "Drupal\\Composer\\ClassLoader\\": "../src/",
       "Drupal\\Composer\\ClassLoader\\Tests\\": "src/",
-      "Drupal\\MyModule\\": "/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/",
+      "Drupal\\MyModule\\": "DRUPAL_CONTRIB<my_module>/src/",
       "": "DRUPAL_ROOT/includes"
     },
     "psr-0": {
