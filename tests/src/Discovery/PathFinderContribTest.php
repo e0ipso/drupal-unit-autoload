@@ -8,6 +8,7 @@
 namespace Drupal\Composer\ClassLoader\Discovery\Tests;
 
 use Drupal\Composer\ClassLoader\Discovery\PathFinderContrib;
+use Mockery as m;
 
 /**
  * Class PathFinderContribTest
@@ -64,8 +65,8 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_find__noDrupal() {
     // 2. Test seed not in Drupal root.
-    $pathFinder = new PathFinderContrib(['', 'testmodule']);
-    $pathFinder->find('data/acme.inc');
+    $pathFinder = new PathFinderContrib(['data/acme.inc', 'testmodule']);
+    $pathFinder->find(__DIR__);
   }
 
   /**
@@ -77,8 +78,10 @@ class PathFinderContribTest extends \PHPUnit_Framework_TestCase {
    */
   public function test_find__noContrib() {
     // 3. Test seed not in Drupal contrib.
-    $pathFinder = new PathFinderContrib(['', 'testmodule2']);
-    $pathFinder->find('data/docroot/sites/all/modules/testmodule/composer.json');
+    $coreFinder = m::mock('\Drupal\Composer\ClassLoader\Discovery\PathFinderCore');
+    $coreFinder->shouldReceive('find')->andReturn('data/docroot/')->once();
+    $pathFinder = new PathFinderContrib(['data/docroot/sites/all/modules/testmodule/composer.json', 'testmodule2'], $coreFinder);
+    $pathFinder->find(__DIR__);
   }
 
   /**

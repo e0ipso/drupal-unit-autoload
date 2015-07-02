@@ -16,20 +16,13 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
    */
   public function find($seed) {
     $seed = realpath($seed);
-    // Try to create the iterator with the seed.
-    try {
-      $directory = new \DirectoryIterator($seed);
-    }
-    catch (\RuntimeException $e) {
-      // If the seed was not a directory, then get the parent directory.
-      $path_info = pathinfo($seed);
-      $directory = new \DirectoryIterator($path_info['dirname']);
-    }
+    $directory = is_dir($seed) ? $seed : dirname($seed);
+
     // Starting at the directory containing the seed path, we go one directory
     // up and up and up until we reach the Drupal root.
     do {
       if ($this->isDrupalRoot($directory)) {
-        return $this->cleanDirPath($directory->getPathName()) . $this->path;
+        return $directory . $this->path;
       }
     }
     while ($directory = $this->getParentDirectory($directory));
@@ -43,24 +36,19 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
   /**
    * Checks if the passed directory is the Drupal root.
    *
-   * @param \DirectoryIterator $directory
-   *   The directory iterator item.
+   * @param string $directory
+   *   The directory path.
    *
    * @return bool
    *   TRUE if the passed directory is the Drupal root.
    */
-  protected function isDrupalRoot(\DirectoryIterator $directory) {
-    // We need to clone the $directory object to avoid modifying its internal
-    // operator.
-    $d = clone $directory;
-    // Check if there is a COPYRIGHT.txt file in the directory.
-    foreach ($d as $item) {
-      if (!$item->isFile() || $item->getFilename() != 'COPYRIGHT.txt') {
-        continue;
-      }
-      // Make sure that the COPYRIGHT.txt file corresponds to Drupal.
-      $line = fgets(fopen($item->getPathname(), 'r'));
-      return strpos($line, 'All Drupal code is Copyright') === 0;
+  protected function isDrupalRoot($directory) {
+    if (!empty($directory) && is_dir($directory) && file_exists($directory . DIRECTORY_SEPARATOR . '/index.php')) {
+      // Drupal 7 root.
+      // We check for the presence of 'modules/field/field.module' to differentiate this from a D6 site
+      return (file_exists($directory . DIRECTORY_SEPARATOR . 'includes/common.inc')
+        && file_exists($directory . DIRECTORY_SEPARATOR . 'misc/drupal.js')
+        && file_exists($directory . DIRECTORY_SEPARATOR . 'modules/field/field.module'));
     }
     return FALSE;
   }
@@ -68,31 +56,21 @@ class PathFinderCore extends PathFinderBase implements PathFinderInterface {
   /**
    * Gets the parent directory iterator.
    *
-   * @param \DirectoryIterator $directory
-   *   The current directory iterator.
+   * @param string $directory
+   *   The current directory path.
    *
    * @throws ClassLoaderException
    *   If no parent directory could be found.
    *
-   * @return \DirectoryIterator
+   * @return string
    *   The parent directory.
    */
-  protected function getParentDirectory(\DirectoryIterator $directory) {
-    // Get the path name of the directory.
-    $path_name = $directory->getPathname();
-    $path_name = $this->cleanDirPath($path_name);
-
-    // Get the parent directory and return a DirectoryIterator.
-    $path_info = pathinfo($path_name);
-    if (!empty($path_info['dirname']) && $path_info['dirname'] !== '/') {
-      try {
-        return new \DirectoryIterator($path_info['dirname']);
-      }
-      // @codeCoverageIgnoreStart
-      catch (\UnexpectedValueException $e) {}
+  protected function getParentDirectory($directory) {
+    // Get the parent directory.
+    if ($directory === realpath('/')) {
+      throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $directory));
     }
-    // @codeCoverageIgnoreEnd
-    throw new ClassLoaderException(sprintf('Could not find the parent directory of "%s".', $path_name));
+    return dirname($directory);
   }
 
 }
