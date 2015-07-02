@@ -186,7 +186,9 @@ class AutoloaderBootstrap {
     // Get the drupal path configuration.
     // TODO: Do not load the composer file.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
-    $config['drupal-path'] = (array) $composer_config->autoload->{'drupal-path'};
+    if (isset($composer_config->autoload->{'drupal-path'})) {
+      $config['drupal-path'] = (array) $composer_config->autoload->{'drupal-path'};
+    }
 
     return $config;
   }
