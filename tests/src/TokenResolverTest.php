@@ -91,4 +91,30 @@ class TokenResolverTest extends \PHPUnit_Framework_TestCase {
     $reflection_method->invoke($resolver);
   }
 
+  /**
+   * Tests that the ::cleanToken is working.
+   *
+   * @dataProvider hasTokenProvider
+   *
+   * @covers ::hasToken()
+   */
+  public function test_hasToken($path, $expected) {
+    $resolver = new TokenResolver($path);
+    $this->assertEquals($resolver->hasToken(), $expected);
+  }
+
+  /**
+   * Provider method for test_hasToken.
+   */
+  public function hasTokenProvider() {
+    return [
+      ['DRUPAL_ROOT/includes', TRUE],
+      ['DRUPAL_CONTRIB<my_module>/src/', TRUE],
+      ['/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/', TRUE],
+      ['/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/', TRUE],
+      ['src', FALSE],
+      ['/lorem/ipsum/src', FALSE],
+    ];
+  }
+
 }
