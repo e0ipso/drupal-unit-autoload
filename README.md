@@ -49,7 +49,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
   "require-dev": {
     "phpunit/phpunit": "4.7.*",
     "mockery/mockery": "0.9.*",
-    "mateu-aguilo-bosch/drupal-unit-autoload": "0.1.*"
+    "mateu-aguilo-bosch/drupal-unit-autoload": "1.0.*"
   },
   "autoload": {
     "psr-0": {
@@ -57,20 +57,16 @@ Inside the folder where you have your unit tests you will need to have a `compos
     },
     "psr-4": {
       … This is usual Composer business …
-    }
-  },
-  "class-loader": {
-    "drupal-path": {
-      "\\DrupalCacheInterface": "DRUPAL_ROOT/includes/cache.inc",
-      "\\ServiceContainer": "DRUPAL_CONTRIB<service_container>/lib/ServiceContainer.php",
-      "\\Drupal": "DRUPAL_CONTRIB<service_container>/lib/Drupal.php"
-    },
-    "psr-4": {
       "Drupal\\service_container\\": "DRUPAL_CONTRIB<service_container>/src",
       "Drupal\\Core\\": [
         "DRUPAL_CONTRIB<service_container>/lib/Core",
         "DRUPAL_CONTRIB<contrib>/src/DrupalCore"
       ]
+    },
+    "drupal-path": {
+      "\\DrupalCacheInterface": "DRUPAL_ROOT/includes/cache.inc",
+      "\\ServiceContainer": "DRUPAL_CONTRIB<service_container>/lib/ServiceContainer.php",
+      "\\Drupal": "DRUPAL_CONTRIB<service_container>/lib/Drupal.php"
     }
   }
 }
@@ -80,8 +76,10 @@ Running `composer install` on that folder will download PHPUnit, Mockery -and al
 tests-. Additionally it will download this project, that is what `"mateu-aguilo-bosch/drupal-unit-autoload": "0.1.*"` is
 for.
 
-At this point you only need is add the new _class-loader_ key in your composer file. In there you have two options:
-  - Provide class names and the files where they are found.
+At this point you only need is add the paths with `DRUPAL_ROOT` or `DRUPAL_CONTRIB<modulename>` in your composer file.
+
+You have two options:
+  - Provide class names and the files where they are found using the new key inside of `autoload` called `drupal-path`.
   - Provide psr-4 and psr-0 namespace prefixes and the path where they are mapped. This is very simmilar to what
     composer does, but with the magic that finds where the Drupal root is and where the contrib modules are installed.
 
