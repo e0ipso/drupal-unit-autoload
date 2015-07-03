@@ -176,6 +176,7 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
       'drupal-path' => [
         '\\Tmp' => 'DRUPAL_ROOT/file.inc',
         '\\Tmp2' => 'data/acme.inc',
+        '\\Tmp3' => 'data/acme.inc',
       ],
     ];
     $this->assertEquals($expected, $config);
