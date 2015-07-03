@@ -38,7 +38,14 @@ The problem that this project aims to solve is to give you a way to provide a si
 all those scenarios.
 
 ## The Solution
-Meet the Drupal Unit Autoload.
+Meet the Drupal Unit Autoload. To include it, just add the following to your PHPUnit test class (change the path
+depending on the location of your test classes):
+
+```php
+require_once __DIR__ . '/../../vendor/mateu-aguilo-bosch/drupal-unit-autoload/autoload.php';
+```
+
+That will load Composer's autoloader + the Drupal capabilities.
 
 The only thing that you need to do is add a new `composer.json` key with tokens in the path.
 
