@@ -100,10 +100,10 @@ class AutoloaderBootstrap {
    *   The Composer configuration.
    */
   protected function registerDrupalPaths($composer_config) {
-    if (empty($composer_config['drupal-path'])) {
+    if (empty($composer_config['class-location'])) {
       return;
     }
-    $this->loader->setClassMap((array) $composer_config['drupal-path']);
+    $this->loader->setClassMap((array) $composer_config['class-location']);
     $this->load();
   }
 
@@ -152,7 +152,7 @@ class AutoloaderBootstrap {
     $config = [
       'psr-0' => [],
       'psr-4' => [],
-      'drupal-path' => [],
+      'class-location' => [],
     ];
 
     // Find the tokenized paths.
@@ -185,12 +185,12 @@ class AutoloaderBootstrap {
 
     // Get the drupal path configuration.
     $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
-    $config['drupal-path'] = array();
-    if (isset($composer_config->autoload->{'drupal-path'})) {
-      $config['drupal-path'] = array_merge($config['drupal-path'], (array) $composer_config->autoload->{'drupal-path'});
+    $config['class-location'] = array();
+    if (isset($composer_config->autoload->{'class-location'})) {
+      $config['class-location'] = array_merge($config['class-location'], (array) $composer_config->autoload->{'class-location'});
     }
-    if (isset($composer_config->{'autoload-dev'}->{'drupal-path'})) {
-      $config['drupal-path'] = array_merge($config['drupal-path'], (array) $composer_config->{'autoload-dev'}->{'drupal-path'});
+    if (isset($composer_config->{'autoload-dev'}->{'class-location'})) {
+      $config['class-location'] = array_merge($config['class-location'], (array) $composer_config->{'autoload-dev'}->{'class-location'});
     }
 
     return $config;

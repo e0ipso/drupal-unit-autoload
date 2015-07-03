@@ -63,7 +63,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
         "DRUPAL_CONTRIB<contrib>/src/DrupalCore"
       ]
     },
-    "drupal-path": {
+    "class-location": {
       "\\DrupalCacheInterface": "DRUPAL_ROOT/includes/cache.inc",
       "\\ServiceContainer": "DRUPAL_CONTRIB<service_container>/lib/ServiceContainer.php",
       "\\Drupal": "DRUPAL_CONTRIB<service_container>/lib/Drupal.php"
@@ -79,7 +79,7 @@ for.
 At this point you only need is add the paths with `DRUPAL_ROOT` or `DRUPAL_CONTRIB<modulename>` in your composer file.
 
 You have two options:
-  - Provide class names and the files where they are found using the new key inside of `autoload` called `drupal-path`.
+  - Provide class names and the files where they are found using the new key inside of `autoload` called `class-location`.
   - Provide psr-4 and psr-0 namespace prefixes and the path where they are mapped. This is very simmilar to what
     composer does, but with the magic that finds where the Drupal root is and where the contrib modules are installed.
 

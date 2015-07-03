@@ -173,7 +173,7 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
         'Drupal\\MyModule\\' => ['DRUPAL_CONTRIB<my_module>/src/'],
         '' => ['DRUPAL_ROOT/includes'],
       ],
-      'drupal-path' => [
+      'class-location' => [
         '\\Tmp' => 'DRUPAL_ROOT/file.inc',
         '\\Tmp2' => 'data/acme.inc',
         '\\Tmp3' => 'data/acme.inc',
