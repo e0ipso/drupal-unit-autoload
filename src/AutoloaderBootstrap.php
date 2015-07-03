@@ -14,7 +14,7 @@ namespace Drupal\Composer\ClassLoader;
  *
  * @package Drupal\Composer\ClassLoader
  */
-class AutoloaderBootstrap {
+class AutoloaderBootstrap implements AutoloaderBootstrapInterface {
 
   const AUTOLOAD_METHOD = 'autoload';
   const COMPOSER_CONFIGURATION_NAME = 'composer.json';
@@ -67,7 +67,7 @@ class AutoloaderBootstrap {
   }
 
   /**
-   * Register the autoloader if it is not registered.
+   * {@inheritdoc}
    */
   public function register() {
     if ($this->checkLoadedAutoloader()) {
@@ -132,9 +132,7 @@ class AutoloaderBootstrap {
   }
 
   /**
-   * Checks if the autoloader has been added.
-   *
-   * @return bool
+   * {@inheritdoc}
    */
   public function checkLoadedAutoloader() {
     $functions = spl_autoload_functions();
@@ -142,10 +140,7 @@ class AutoloaderBootstrap {
   }
 
   /**
-   * Gets the configuration for the drupal loader from the Composer loader.
-   *
-   * @return array
-   *   The configuration array for the drupal loader.
+   * {@inheritdoc}
    */
   public function getConfig() {
     // Initialize empty configuration.
@@ -194,6 +189,13 @@ class AutoloaderBootstrap {
     }
 
     return $config;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getClassLoader() {
+    return $this->classLoader;
   }
 
 }
