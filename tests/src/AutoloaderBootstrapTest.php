@@ -182,4 +182,15 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expected, $config);
   }
 
+  /**
+   * Tests the ::getClassLoader method.
+   *
+   * @covers ::getClassLoader()
+   */
+  public function test_getClassLoader() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $this->assertEquals($loader, $autoloader->getClassLoader());
+  }
+
 }
