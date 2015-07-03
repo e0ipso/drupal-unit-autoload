@@ -50,6 +50,20 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $loader
       ->shouldReceive('addPsr4')
       ->once();
+    $loader
+      ->shouldReceive('getPrefixes')
+      ->once()
+      ->andReturn([
+        '' => 'DRUPAL_ROOT/includes',
+      ]);
+    $loader
+      ->shouldReceive('getPrefixesPsr4')
+      ->once()
+      ->andReturn([
+        'Drupal\\Composer\\ClassLoader\\' => '../src/',
+        'Drupal\\Composer\\ClassLoader\\Tests\\' => 'src/',
+        '' => 'DRUPAL_ROOT/includes',
+      ]);
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $autoloader->register();
 
@@ -109,7 +123,7 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $reflection_method = new \ReflectionMethod(get_class($autoloader), 'registerDrupalPaths');
     $reflection_method->setAccessible(TRUE);
-    $value = $reflection_method->invokeArgs($autoloader, [new \stdClass()]);
+    $value = $reflection_method->invokeArgs($autoloader, [[]]);
     $this->assertNull($value);
   }
 
@@ -123,8 +137,49 @@ class AutoloaderBootstrapTest extends \PHPUnit_Framework_TestCase {
     $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
     $reflection_method = new \ReflectionMethod(get_class($autoloader), 'registerPsr');
     $reflection_method->setAccessible(TRUE);
-    $value = $reflection_method->invokeArgs($autoloader, [new \stdClass()]);
+    $value = $reflection_method->invokeArgs($autoloader, [[]]);
     $this->assertNull($value);
+  }
+
+  /**
+   * Tests the ::getConfig method.
+   *
+   * @covers ::getConfig()
+   */
+  public function test_getConfig() {
+    $loader = m::mock('\Composer\Autoload\ClassLoader');
+    $loader
+      ->shouldReceive('getPrefixes')
+      ->once()
+      ->andReturn([
+        '' => '/lorem/ipsum/DRUPAL_ROOT/includes',
+      ]);
+    $loader
+      ->shouldReceive('getPrefixesPsr4')
+      ->once()
+      ->andReturn([
+        'Drupal\\Composer\\ClassLoader\\' => '/lorem/ipsum/../src/',
+        'Drupal\\Composer\\ClassLoader\\Tests\\' => '/lorem/ipsum/src/',
+        'Drupal\\MyModule\\' => '/lorem/ipsum/DRUPAL_CONTRIB<my_module>/src/',
+        '' => '/lorem/ipsum/DRUPAL_ROOT/includes',
+      ]);
+    $autoloader = new AutoloaderBootstrap($loader, 'data/docroot/sites/all/modules/testmodule/composer.json');
+    $config = $autoloader->getConfig();
+    $expected = [
+      'psr-0' => [
+        '' => ['DRUPAL_ROOT/includes'],
+      ],
+      'psr-4' => [
+        'Drupal\\MyModule\\' => ['DRUPAL_CONTRIB<my_module>/src/'],
+        '' => ['DRUPAL_ROOT/includes'],
+      ],
+      'class-location' => [
+        '\\Tmp' => 'DRUPAL_ROOT/file.inc',
+        '\\Tmp2' => 'data/acme.inc',
+        '\\Tmp3' => 'data/acme.inc',
+      ],
+    ];
+    $this->assertEquals($expected, $config);
   }
 
 }

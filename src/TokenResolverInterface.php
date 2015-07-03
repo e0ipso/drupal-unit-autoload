@@ -18,4 +18,20 @@ interface TokenResolverInterface {
    */
   public function resolve();
 
+  /**
+   * Checks if the path contains a known token pattern.
+   *
+   * @return bool
+   *   TRUE if the path contains a token. FALSE otherwise.
+   */
+  public function hasToken();
+
+  /**
+   * Gets the path by removing everything before the token.
+   *
+   * @return string
+   *   The path starting with the token.
+   */
+  public function trimPath();
+
 }

@@ -7,15 +7,24 @@
   "autoload": {
     "psr-4": {
       "Drupal\\Composer\\ClassLoader\\": "../src/",
-      "Drupal\\Composer\\ClassLoader\\Tests\\": "src/"
-    }
-  },
-  "class-loader": {
-    "drupal-path": {
+      "Drupal\\Composer\\ClassLoader\\Tests\\": "src/",
+      "Drupal\\MyModule\\": "DRUPAL_CONTRIB<my_module>/src/",
+      "": "DRUPAL_ROOT/includes"
+    },
+    "psr-0": {
+      "": "DRUPAL_ROOT/includes"
+    },
+    "class-location": {
       "\\Tmp": "DRUPAL_ROOT/file.inc",
       "\\Tmp2": "data/acme.inc"
+    }
+  },
+  "autoload-dev": {
+    "psr-0": {
+      "Drupal\\MyModule\\": "DRUPAL_CONTRIB<my_module>/lib/"
     },
-    "psr-4": "DRUPAL_ROOT/file.inc",
-    "psr-0": "DRUPAL_ROOT/file.inc"
+    "class-location": {
+      "\\Tmp3": "data/acme.inc"
+    }
   }
 }
