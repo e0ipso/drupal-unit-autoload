@@ -22,6 +22,9 @@
   "autoload-dev": {
     "psr-0": {
       "Drupal\\MyModule\\": "DRUPAL_CONTRIB<my_module>/lib/"
+    },
+    "drupal-path": {
+      "\\Tmp3": "data/acme.inc"
     }
   }
 }
