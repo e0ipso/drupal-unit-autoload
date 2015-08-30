@@ -1,6 +1,6 @@
-[![Coverage Status](https://coveralls.io/repos/mateu-aguilo-bosch/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/mateu-aguilo-bosch/drupal-unit-autoload) [![Build Status](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload.svg?branch=master)](https://travis-ci.org/mateu-aguilo-bosch/drupal-unit-autoload)
+[![Coverage Status](https://coveralls.io/repos/e0ipso/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/e0ipso/drupal-unit-autoload) [![Build Status](https://travis-ci.org/e0ipso/drupal-unit-autoload.svg?branch=master)](https://travis-ci.org/e0ipso/drupal-unit-autoload)
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mateu-aguilo-bosch/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/e0ipso/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Drupal Unit Autoload
 
@@ -42,7 +42,7 @@ Meet the Drupal Unit Autoload. To include it, just add the following to your PHP
 depending on the location of your test classes):
 
 ```php
-require_once __DIR__ . '/../../vendor/mateu-aguilo-bosch/drupal-unit-autoload/autoload.php';
+require_once __DIR__ . '/../../vendor/e0ipso/drupal-unit-autoload/autoload.php';
 ```
 
 That will load Composer's autoloader + the Drupal capabilities.
@@ -56,7 +56,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
   "require-dev": {
     "phpunit/phpunit": "4.7.*",
     "mockery/mockery": "0.9.*",
-    "mateu-aguilo-bosch/drupal-unit-autoload": "1.0.*"
+    "e0ipso/drupal-unit-autoload": "1.0.*"
   },
   "autoload": {
     "psr-0": {
@@ -80,7 +80,7 @@ Inside the folder where you have your unit tests you will need to have a `compos
 ```
 
 Running `composer install` on that folder will download PHPUnit, Mockery -and all of the tools that you use for your
-tests-. Additionally it will download this project, that is what `"mateu-aguilo-bosch/drupal-unit-autoload": "0.1.*"` is
+tests-. Additionally it will download this project, that is what `"e0ipso/drupal-unit-autoload": "0.1.*"` is
 for.
 
 At this point you only need is add the paths with `DRUPAL_ROOT` or `DRUPAL_CONTRIB<modulename>` in your composer file.
