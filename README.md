@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/e0ipso/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/e0ipso/drupal-unit-autoload) [![Build Status](https://travis-ci.org/e0ipso/drupal-unit-autoload.svg?branch=master)](https://travis-ci.org/e0ipso/drupal-unit-autoload)
+[![Coverage Status](https://coveralls.io/repos/e0ipso/drupal-unit-autoload/badge.svg)](https://coveralls.io/r/e0ipso/drupal-unit-autoload) [![Build Status](https://travis-ci.org/e0ipso/drupal-unit-autoload.svg?branch=master)](https://travis-ci.org/e0ipso/drupal-unit-autoload) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/e0ipso/drupal-unit-autoload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/e0ipso/drupal-unit-autoload/?branch=master)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/e0ipso/drupal-unit-autoload?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
