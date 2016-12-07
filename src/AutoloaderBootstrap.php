@@ -179,7 +179,11 @@ class AutoloaderBootstrap implements AutoloaderBootstrapInterface {
     }
 
     // Get the drupal path configuration.
-    $composer_config = json_decode(file_get_contents(static::COMPOSER_CONFIGURATION_NAME));
+    $composer_path = join(DIRECTORY_SEPARATOR, array(
+        COMPOSER_CONFIGURATION_PATH,
+        static::COMPOSER_CONFIGURATION_NAME,
+    ));
+    $composer_config = json_decode(file_get_contents($composer_path));
     $config['class-location'] = array();
     if (isset($composer_config->autoload->{'class-location'})) {
       $config['class-location'] = array_merge($config['class-location'], (array) $composer_config->autoload->{'class-location'});
